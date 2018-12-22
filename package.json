@@ -1,0 +1,20 @@
+{
+  "name": "@peter.naydenov/fsm-hub",
+  "version": "1.0.0",
+  "description": "Fsm control center. State managment system for fsm.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Naydenov",
+  "license": "MIT",
+  "dependencies": {
+    "@peter.naydenov/fsm": "^2.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "expect.js": "^0.3.1",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
+  }
+}
