@@ -1,5 +1,6 @@
 const
-  FsmHub  = require ('../src/index.js') 
+  FsmHub  = require ('../src/index.js')
+, Fsm     = require ( '@peter.naydenov/fsm')
 , chai    = require ( 'chai' )
 , expect  = require ( 'expect.js')
 ;
@@ -43,9 +44,10 @@ it ( 'Check FSM structure', () => {
                 }
         ;
 
-   
-
-
+    const 
+          oneFsm = new Fsm ( miniOne, {} )
+        , twoFsm = new Fsm ( miniTwo, {} )
+        ;
 
     // HOW IT SHOULD WORK?
 
@@ -76,6 +78,8 @@ it ( 'Check FSM structure', () => {
      */
 
     let hub = new FsmHub ( machine, transformerLib );
+
+    hub.addFsm ({ oneFsm, twoFsm })
 
     console.log ( hub )
     
