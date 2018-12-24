@@ -80,3 +80,9 @@ _callback ( source, state, response ) {
 } // _callback func.
 
 } // FsmHub class
+
+
+
+module.exports = FsmHub
+
+

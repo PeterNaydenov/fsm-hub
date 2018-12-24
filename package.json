@@ -4,7 +4,8 @@
   "description": "Fsm control center. State managment system for fsm.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test",
+    "cover": "nyc mocha test"
   },
   "author": "Peter Naydenov",
   "license": "MIT",
@@ -16,5 +17,18 @@
     "expect.js": "^0.3.1",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "node_modules",
+      "test"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ]
   }
 }

@@ -1,8 +1,7 @@
-
 const
-Fsm    = require ('../src/fsm') 
-, chai   = require ( 'chai' )
-, expect = require ( 'expect.js')
+  FsmHub  = require ('../src/index.js') 
+, chai    = require ( 'chai' )
+, expect  = require ( 'expect.js')
 ;
 
 describe ( 'Finite State Machine', () => {
@@ -78,6 +77,7 @@ it ( 'Check FSM structure', () => {
 
     let hub = new FsmHub ( machine, transformerLib );
 
+    console.log ( hub )
     
    
 }) // it minimal working configuration
