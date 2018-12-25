@@ -20,6 +20,14 @@ it ( 'Check FSM structure', () => {
                                         , 'answer' : resultResponseData 
                                     }
                             }
+                        , simple : function ( state, resultResponseData ) {
+                                console.log ( 'hello from second transformation' )
+                                return {
+                                            second : 'second'
+                                          , state
+                                          , 'answer' : resultResponseData
+                                        }
+                            } 
                     }
         ,  machine = {
                        table : [
@@ -29,10 +37,12 @@ it ( 'Check FSM structure', () => {
                                     , [ 'miniTwo', 'off',    'miniOne', 'switchOFF' ]
                                     //[ 'fsm',     'state', 'callbackFn' ]
                                     , [ 'oneFsm', 'active', 'yo'        ]
+                                    , [ 'twoFsm', 'active', 'showme']
                                 ]
                       , transformers : {
                                       // "from/to" : functionName
-                                     'oneFsm/twoFsm' : 'one2two' 
+                                       'oneFsm/twoFsm' : 'one2two'
+                                     , 'twoFsm/showme' : 'simple' 
                                   }       
                  }
         , miniOne = {
@@ -50,16 +60,22 @@ it ( 'Check FSM structure', () => {
         ;
 
     function switchOn ( task, dependencies, stateObj, dt ) {
-            console.log ( dt )
             task.done ({ 
                       success  : true 
-                    , response : 'hello'
+                    , response : dt
+                })
+        }
+
+    function switchOnSecond ( task, dependencies, stateObj, dt ) {
+            task.done ({ 
+                      success  : true 
+                    , response : dt
                 })
         }
 
     const 
           oneFsm = new Fsm ( miniOne, { switchOn}  )
-        , twoFsm = new Fsm ( miniTwo, { switchOn}  )
+        , twoFsm = new Fsm ( miniTwo, { switchOn: switchOnSecond}  )
         ;
 
     // HOW IT SHOULD WORK?
@@ -94,8 +110,22 @@ it ( 'Check FSM structure', () => {
 
     hub.addFsm ({ oneFsm, twoFsm })
 
-    console.log ( hub )
+    hub.addFunctions ( {
+          'yo'     : transitionResult => {
+                            console.log ( 'YO' )
+                            console.log (transitionResult)
+                        }
+        , 'showme' : transitionResult => {
+                            console.log ( 'ShowMe' )
+                            console.log (transitionResult)
+                        }
+    })
+
+    // console.log ( hub )
     oneFsm.update ( 'activate', 'try' )
+
+       
+
 }) // it minimal working configuration
 
 

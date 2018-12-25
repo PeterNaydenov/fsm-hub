@@ -144,7 +144,13 @@ _callback ( fsmName, state, response ) {
             } // if fsmSubscriber
         if ( callbackNames ) {
                     callbackNames.forEach ( cbName => {
-                                const fn = fnCallback[cbName];
+                                const 
+                                    fn = fnCallback[cbName]
+                                    , transformerKey = `${fsmName}/${cbName}`
+                                    , transformFn = hub.transition [ transformerKey ]
+                                    ;
+                                if ( typeof transformFn == 'function' )   data = transformFn (state, response )
+                                else                                      data = response
                                 if ( typeof fn == 'function' )   fn(data)
                         })
             } // if fnCallback
