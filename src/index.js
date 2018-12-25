@@ -4,12 +4,12 @@ const Fsm = require ( '@peter.naydenov/fsm' );
 
 class FsmHub {
 
-constructor ( machine, transitionLib ) {
+constructor ( machine, transformerLib ) {
         const hub = this;
         hub.fsm = {}          // Fsm's placeholder
         hub.fnCallback = {}   // Callback functions place
 
-        const result = this._setTransitions ( machine, transitionLib );
+        const result = this._setTransitions ( machine, transformerLib );
         hub.transition  = result.transitions   // Data transformation function with format 'fsm/fsmListener' or 'fsm/function'
         hub.subscribers = result.subscribers   // List of fsm names that are listening for 'fsm/state' changes
         hub.actions     = result.actions       // Fsm action that should be applied on 'fsm/state/listener' 
@@ -20,7 +20,7 @@ constructor ( machine, transitionLib ) {
 
 
 
-_setTransitions ( {table, transformers}, transitionLib ) {
+_setTransitions ( {table, transformers}, transformerLib={} ) {
         let 
               transitions = {}
             , subscribers = {}
@@ -66,7 +66,15 @@ _setTransitions ( {table, transformers}, transitionLib ) {
                             callbacks[key].push ( ruleLine[listener] )
                         }
             }) // forEach ruleLine
-        if ( transitionLib )   transitions = Object.assign ( {}, transitionLib )
+        if ( transformers )   {
+                    Object.keys ( transformers ).forEach ( key => {
+                            const
+                                  keyFn = transformers [key]
+                                , fn    = transformerLib [ keyFn] 
+                                ;
+                            if ( fn )   transitions[key] = fn
+                        })
+            }
         return { transitions, subscribers, callbacks, actions }
     } // _setTransitions func.
 
@@ -117,8 +125,6 @@ _callback ( fsmName, state, response ) {
             , act = hub.actions
             ;
         let data;
-        // TODO: check for transformations
-        data = response
         if ( fsmSubscriber ) {
                     fsmSubscriber.forEach ( subscriberName => {
                                 if ( !hub.fsm[ subscriberName ] )   {
@@ -128,10 +134,13 @@ _callback ( fsmName, state, response ) {
                                 const 
                                       actionKey = `${itemKey}/${subscriberName}`
                                     , action = act [actionKey]
+                                    , transformerKey = `${fsmName}/${subscriberName}`
+                                    , transformFn = hub.transition [transformerKey]
                                     ;
+                                if ( typeof transformFn == 'function' )   data = transformFn (state, response )
+                                else                                      data = response
                                 hub.fsm [ subscriberName ].update ( action, data )
                         })
-                    
             } // if fsmSubscriber
         if ( callbackNames ) {
                     callbackNames.forEach ( cbName => {

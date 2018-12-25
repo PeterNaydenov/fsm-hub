@@ -15,7 +15,10 @@ it ( 'Check FSM structure', () => {
            transformerLib = {
                         "one2two" : function ( state, resultResponseData ) {
                                 // convert values from miniOne to miniTwo format
-                                return resultResponseData
+                                return { 
+                                          state
+                                        , 'answer' : resultResponseData 
+                                    }
                             }
                     }
         ,  machine = {
@@ -29,7 +32,7 @@ it ( 'Check FSM structure', () => {
                                 ]
                       , transformers : {
                                       // "from/to" : functionName
-                                     'miniOne/miniTwo' : 'one2two' 
+                                     'oneFsm/twoFsm' : 'one2two' 
                                   }       
                  }
         , miniOne = {
