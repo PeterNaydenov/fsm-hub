@@ -6,11 +6,14 @@ class FsmHub {
 
 constructor ( machine, transitionLib ) {
         const hub = this;
-        hub.fsm = {}
+        hub.fsm = {}          // Fsm's placeholder
+        hub.fnCallback = {}   // Callback functions place
+
         const result = this._setTransitions ( machine, transitionLib );
-        hub.transition  = result.transitions
-        hub.subscribers = result.subscribers
-        hub.actions     = result.actions
+        hub.transition  = result.transitions   // Data transformation function with format 'fsm/fsmListener' or 'fsm/function'
+        hub.subscribers = result.subscribers   // List of fsm names that are listening for 'fsm/state' changes
+        hub.actions     = result.actions       // Fsm action that should be applied on 'fsm/state/listener' 
+        hub.callbacks  = result.callbacks      // List of functional callbacks
     } // constructor func.
 
 
@@ -22,20 +25,49 @@ _setTransitions ( {table, transformers}, transitionLib ) {
               transitions = {}
             , subscribers = {}
             , actions     = {}
+            , callbacks  = {}
             ;
 
-        table.forEach ( (el,i) => {
-                    if ( !(el instanceof Array) &&   el.length != 4  ) {
+        table.forEach ( (ruleLine,i) => {
+                    const // ruleLine elements:
+                            fsmName = 0
+                          , onState = 1
+                          , listener = 2
+                          , listenerAct = 3
+                          , isArray = ruleLine instanceof Array
+                          ;
+
+                    if ( !isArray ) {
                             console.log ( `Error: Wrong description record on row ${i+1}.`)
                             return
-                    }
-                    const key = `${el[0]}/${el[1]}`;     // fsmName/state
-                    subscribers [key] = el[2]
-                    actions [`${key}/${el[2]}`] = el[3]  // fsmName/state/fsmSubscriberName
-            })
-        if ( transitionLib )   transitions = Object.assign ( {}, transitionLib )
+                        }
 
-        return { transitions, subscribers, actions }
+                    const 
+                            length = ruleLine.length
+                          , hasCorrectLength = (length == 4 || length == 3 ) ? true : false
+                          ;
+
+                    if ( !hasCorrectLength ) {
+                            console.log ( `Error: Wrong description record on row ${i+1}.`)
+                            return
+                        }
+
+                    const key = `${ruleLine[fsmName]}/${ruleLine[onState]}`;   // fsmName/state
+                    if ( length == 4 ) { // ruleLine with fsm
+                            if ( !subscribers[key] )   subscribers[key] = []
+                            subscribers [key].push ( ruleLine[listener]   ) 
+
+                            const actKey = `${key}/${ruleLine[listener]}`;   // fsmName/state/fsmSubscriberName
+                            actions [actKey] = ruleLine[listenerAct]
+                        }
+
+                    if ( length == 3 ) {   // ruleLine with function callback
+                            if ( !callbacks[key] )   callbacks[key] = []
+                            callbacks[key].push ( ruleLine[listener] )
+                        }
+            }) // forEach ruleLine
+        if ( transitionLib )   transitions = Object.assign ( {}, transitionLib )
+        return { transitions, subscribers, callbacks, actions }
     } // _setTransitions func.
 
 
@@ -50,10 +82,9 @@ addFsm ( ins ) {
                                     return
                             }
                     hub.fsm [name] = ins[name]
-                    hub.fsm [name].on ( 'update', () => {
+                    hub.fsm [name].on ( 'update', (state, response ) => {
                                 hub._callback ( name, state, response )
                         })
-                    
             })
     } // addFsm func.
 
@@ -61,25 +92,53 @@ addFsm ( ins ) {
 
 
 
-_callback ( source, state, response ) {
+addFunctions ( ins ) {
+        const hub = this;
+        Object.keys(ins).forEach ( name => {
+                    if ( hub.fnCallback[name] ) {
+                                    console.log ( `Function "${name}" is already registered` )
+                                    return
+                            }
+                    hub.fnCallback [name] = ins[name]
+            })
+    } // addFunctions func.
+
+
+
+
+
+_callback ( fsmName, state, response ) {
         const 
-            hub = this
-            , subscribers = hub.subscribers
+              hub = this
+            , itemKey       = `${fsmName}/${state}`
+            , fsmSubscriber = hub.subscribers[itemKey] || false
+            , callbackNames      = hub.callbacks[itemKey]   || false
+            , fnCallback    = hub.fnCallback  || false
             , act = hub.actions
-            , item = `${source}/${state}`
-            , fsmSubscriber = subscribers[item]
             ;
         let data;
+        // TODO: check for transformations
+        data = response
         if ( fsmSubscriber ) {
-                // TODO: check for transformations
-                data = response
-                if ( !fsm [ fsmSubscriber ] )   {
-                        console.log ( `Warning: Fsm "${fsmSubscriber}" is not registered to the hub.` )
-                        return
-                }
-                action = act [ `${item}/${fsmSubscriber}`]
-                fsm [ fsmSubscriber ].update ( action, data )
+                    fsmSubscriber.forEach ( subscriberName => {
+                                if ( !hub.fsm[ subscriberName ] )   {
+                                        console.log ( `Warning: Fsm "${fsmSubscriber}" is not registered to the hub.` )
+                                        return
+                                    }
+                                const 
+                                      actionKey = `${itemKey}/${subscriberName}`
+                                    , action = act [actionKey]
+                                    ;
+                                hub.fsm [ subscriberName ].update ( action, data )
+                        })
+                    
             } // if fsmSubscriber
+        if ( callbackNames ) {
+                    callbackNames.forEach ( cbName => {
+                                const fn = fnCallback[cbName];
+                                if ( typeof fn == 'function' )   fn(data)
+                        })
+            } // if fnCallback
     } // _callback func.
 
 } // FsmHub class

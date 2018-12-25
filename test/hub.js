@@ -21,9 +21,11 @@ it ( 'Check FSM structure', () => {
         ,  machine = {
                        table : [
                                    // [ fsm, onStateChange, listenerFsm , action  ]
-                                      [ 'miniOne', 'active', 'miniTwo', 'activate'  ]
+                                      [ 'oneFsm', 'active', 'twoFsm', 'activate'  ]
                                     , [ 'miniOne', 'off',    'miniTwo', 'switchOFF' ]
                                     , [ 'miniTwo', 'off',    'miniOne', 'switchOFF' ]
+                                    //[ 'fsm',     'state', 'callbackFn' ]
+                                    , [ 'oneFsm', 'active', 'yo'        ]
                                 ]
                       , transformers : {
                                       // "from/to" : functionName
@@ -33,20 +35,28 @@ it ( 'Check FSM structure', () => {
         , miniOne = {
                           init : 'none'
                         , table : [
-                                    [ 'none', '']
+                                    [ 'none', 'activate', 'active', 'switchOn']
                                 ]
                 }
         , miniTwo = {
                           init : 'none'
                         , table : [
-
+                                    ['none', 'activate', 'active', 'switchOn' ]
                                 ]
                 }
         ;
 
+    function switchOn ( task, dependencies, stateObj, dt ) {
+            console.log ( dt )
+            task.done ({ 
+                      success  : true 
+                    , response : 'hello'
+                })
+        }
+
     const 
-          oneFsm = new Fsm ( miniOne, {} )
-        , twoFsm = new Fsm ( miniTwo, {} )
+          oneFsm = new Fsm ( miniOne, { switchOn}  )
+        , twoFsm = new Fsm ( miniTwo, { switchOn}  )
         ;
 
     // HOW IT SHOULD WORK?
@@ -82,8 +92,7 @@ it ( 'Check FSM structure', () => {
     hub.addFsm ({ oneFsm, twoFsm })
 
     console.log ( hub )
-    
-   
+    oneFsm.update ( 'activate', 'try' )
 }) // it minimal working configuration
 
 

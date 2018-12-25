@@ -5,11 +5,14 @@ Did you have tried `Fsm (@peter.naydenov/fsm)` yet? **Fsm-hub** is an extension 
 ```js
  
 table : [
-           [ 'One', 'newState', 'Two' , 'reaction' ]
+            // [ fsmName, state, listener         ] - option 1: The listener is a function
+            // [ fsmName, state, listener, action ] - option 2: The listener is an onother fsm.
+             [ 'One', 'stateOn', 'hello' ]
+           , [ 'One', 'newState', 'Two' , 'reaction' ]
            // ... more rows like this
         ]
 ```
-
-Read this row like "When fsm 'One' changes its state to 'newState', then fsm 'Two' will trigger own update action - 'reaction'".
+Read first row as "When fsm 'One' changes its state to 'stateOn', then call function hello".
+Read second row as "When fsm 'One' changes its state to 'newState', then fsm 'Two' will trigger own update action - 'reaction'".
 
 `Fsm-hub` provides high level application-logic as simple table.
