@@ -20,7 +20,7 @@ constructor ( machine, transformerLib ) {
 
 
 
-_setTransitions ( {table, transformers}, transformerLib={} ) {
+_setTransitions ( {reactivity, transformers}, transformerLib={} ) {
         let 
               transitions = {}
             , subscribers = {}
@@ -28,7 +28,7 @@ _setTransitions ( {table, transformers}, transformerLib={} ) {
             , callbacks  = {}
             ;
 
-        table.forEach ( (ruleLine,i) => {
+        reactivity.forEach ( (ruleLine,i) => {
                     const // ruleLine elements:
                             fsmName = 0
                           , onState = 1

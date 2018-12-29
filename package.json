@@ -1,7 +1,7 @@
 {
   "name": "@peter.naydenov/fsm-hub",
   "version": "1.0.0",
-  "description": "Fsm control center. State managment system for fsm.",
+  "description": "FSM orchestration and state-managment tool",
   "main": "index.js",
   "scripts": {
     "test": "mocha test",
@@ -17,6 +17,11 @@
     "mocha": "^5.2.0",
     "nyc": "^13.1.0"
   },
+  "keywords": [
+    "fsm",
+    "state-managment",
+    "orchestration"
+  ],
   "nyc": {
     "include": [
       "src/**/*.js"
