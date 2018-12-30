@@ -1,5 +1,13 @@
 const Fsm = require ( '@peter.naydenov/fsm' );
 
+const   // Error and warnings messages
+    WRONG_REACTIVITY_RECORD  = 'Error: Wrong reactivity record on row %s.'
+  , REGISTERED_FSM_NAME      = 'Warning: FSM "%s" is already registered.'
+  , REGISTERED_FUNCTION_NAME = 'Warning: Function "%s" is already registered.'
+  , MISSING_FSM              = 'Warning: Fsm "%s" is not registered to the hub.'
+  , MISSING_FN               = 'Warning: Function "%s" is not registered to the hub.'
+  ;
+
 
 
 class FsmHub {
@@ -7,13 +15,14 @@ class FsmHub {
 constructor ( machine, transformerLib ) {
         const hub = this;
         hub.fsm = {}          // Fsm's placeholder
-        hub.fnCallback = {}   // Callback functions place
+        hub.fnCallbacks = {}   // Callback functions place
+        hub.debug = machine.debug || false
 
         const result = this._setTransitions ( machine, transformerLib );
-        hub.transition  = result.transitions   // Data transformation function with format 'fsm/fsmListener' or 'fsm/function'
-        hub.subscribers = result.subscribers   // List of fsm names that are listening for 'fsm/state' changes
-        hub.actions     = result.actions       // Fsm action that should be applied on 'fsm/state/listener' 
-        hub.callbacks  = result.callbacks      // List of functional callbacks
+        hub.transformers  = result.transformers  // Data transformation function with format 'fsm/fsmListener' or 'fsm/function'
+        hub.subscribers   = result.subscribers   // List of fsm names that are listening for 'fsm/state' changes
+        hub.actions       = result.actions       // Fsm action that should be applied on 'fsm/state/listener' 
+        hub.callbacks     = result.callbacks     // List of functional callbacks
     } // constructor func.
 
 
@@ -22,13 +31,14 @@ constructor ( machine, transformerLib ) {
 
 _setTransitions ( {reactivity, transformers}, transformerLib={} ) {
         let 
-              transitions = {}
+              mod = {}
             , subscribers = {}
             , actions     = {}
             , callbacks  = {}
             ;
 
         reactivity.forEach ( (ruleLine,i) => {
+                    const  hub = this;
                     const // ruleLine elements:
                             fsmName = 0
                           , onState = 1
@@ -38,7 +48,7 @@ _setTransitions ( {reactivity, transformers}, transformerLib={} ) {
                           ;
 
                     if ( !isArray ) {
-                            console.log ( `Error: Wrong description record on row ${i+1}.`)
+                            hub._debuger ( WRONG_REACTIVITY_RECORD, i+1 )
                             return
                         }
 
@@ -48,7 +58,7 @@ _setTransitions ( {reactivity, transformers}, transformerLib={} ) {
                           ;
 
                     if ( !hasCorrectLength ) {
-                            console.log ( `Error: Wrong description record on row ${i+1}.`)
+                            hub._debuger ( WRONG_REACTIVITY_RECORD, i+1 )
                             return
                         }
 
@@ -72,10 +82,10 @@ _setTransitions ( {reactivity, transformers}, transformerLib={} ) {
                                   keyFn = transformers [key]
                                 , fn    = transformerLib [ keyFn] 
                                 ;
-                            if ( fn )   transitions[key] = fn
+                            if ( fn )   mod[key] = fn
                         })
             }
-        return { transitions, subscribers, callbacks, actions }
+        return { transformers: mod, subscribers, callbacks, actions }
     } // _setTransitions func.
 
 
@@ -86,7 +96,7 @@ addFsm ( ins ) {
         const hub = this;
         Object.keys(ins).forEach ( name => {
                     if ( hub.fsm[name] ) {
-                                    console.log ( `FSM "${name}" is already registered` )
+                                    hub._debuger ( REGISTERED_FSM_NAME, name )
                                     return
                             }
                     hub.fsm [name] = ins[name]
@@ -103,11 +113,11 @@ addFsm ( ins ) {
 addFunctions ( ins ) {
         const hub = this;
         Object.keys(ins).forEach ( name => {
-                    if ( hub.fnCallback[name] ) {
-                                    console.log ( `Function "${name}" is already registered` )
+                    if ( hub.fnCallbacks[name] ) {
+                                    hub._debuger ( REGISTERED_FUNCTION_NAME, name )
                                     return
                             }
-                    hub.fnCallback [name] = ins[name]
+                    hub.fnCallbacks [name] = ins[name]
             })
     } // addFunctions func.
 
@@ -115,27 +125,35 @@ addFunctions ( ins ) {
 
 
 
+_debuger ( str, data ) {
+    const hub = this;
+    if ( hub.debug )   console.log ( str, data )
+} // debuger func.
+
+
+
+
 _callback ( fsmName, state, response ) {
         const 
               hub = this
-            , itemKey       = `${fsmName}/${state}`
-            , fsmSubscriber = hub.subscribers[itemKey] || false
-            , callbackNames      = hub.callbacks[itemKey]   || false
-            , fnCallback    = hub.fnCallback  || false
+            , itemKey        = `${fsmName}/${state}`
+            , fsmSubscriber  = hub.subscribers[itemKey] || false
+            , callbackNames  = hub.callbacks[itemKey]   || false
+            , fnCallbacks    = hub.fnCallbacks          
             , act = hub.actions
             ;
         let data;
         if ( fsmSubscriber ) {
                     fsmSubscriber.forEach ( subscriberName => {
                                 if ( !hub.fsm[ subscriberName ] )   {
-                                        console.log ( `Warning: Fsm "${fsmSubscriber}" is not registered to the hub.` )
+                                        hub._debuger ( MISSING_FSM, fsmSubscriber )
                                         return
                                     }
                                 const 
                                       actionKey = `${itemKey}/${subscriberName}`
                                     , action = act [actionKey]
                                     , transformerKey = `${fsmName}/${subscriberName}`
-                                    , transformFn = hub.transition [transformerKey]
+                                    , transformFn = hub.transformers [transformerKey]
                                     ;
                                 if ( typeof transformFn == 'function' )   data = transformFn (state, response )
                                 else                                      data = response
@@ -145,13 +163,14 @@ _callback ( fsmName, state, response ) {
         if ( callbackNames ) {
                     callbackNames.forEach ( cbName => {
                                 const 
-                                    fn = fnCallback[cbName]
+                                      fn = fnCallbacks[cbName]
                                     , transformerKey = `${fsmName}/${cbName}`
-                                    , transformFn = hub.transition [ transformerKey ]
+                                    , transformFn = hub.transformers [ transformerKey ]
                                     ;
                                 if ( typeof transformFn == 'function' )   data = transformFn (state, response )
                                 else                                      data = response
                                 if ( typeof fn == 'function' )   fn(data)
+                                else                             hub._debuger ( MISSING_FN, cbName )
                         })
             } // if fnCallback
     } // _callback func.

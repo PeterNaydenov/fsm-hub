@@ -2,7 +2,7 @@
 
 FSM orchestration and state managment tool.
 
-Did you have tried `Fsm (@peter.naydenov/fsm)` till now? **Fsm-hub** extends `reactivity` control in this eco-system. **Fsm-hub** will listen for changes in all hub's registrated **machines(fsm)** and will trigger an execution of callback code - **listener functions** or **update with action in other fsm machines**. Register all **fsm machine** instances and form an `application with centralized control of the logic`.
+Did you have tried `Fsm (@peter.naydenov/fsm)` till now? **Fsm-hub** extends `reactivity` control to this eco-system. **Fsm-hub** will listen for changes in all hub's registrated **machines(fsm)** and will trigger an execution of callback code - **listener functions** or **update with action in other fsm machines**. Register all **fsm machine** instances and form an `application with centralized control of the logic`.
 
 
 
@@ -140,7 +140,7 @@ Hub should start **twoFsm** when **oneFsm** is started. When **twoFsm** is `acti
                     switchOn ( task, dependencies, stateObj, dt ) {
                                 task.done ({ 
                                           success  : true 
-                                        , response : dt
+                                        , response : dt   // send data without changes
                                     })
                         }
             };
@@ -149,8 +149,8 @@ Hub should start **twoFsm** when **oneFsm** is started. When **twoFsm** is `acti
 
 // Init fsm machines
     const  // oneFsm and twoFsm are identical fsm machines
-          oneFsm = new Fsm ( miniOne, transitionOne  )
-        , twoFsm = new Fsm ( miniOne, transitionOne  )
+          one = new Fsm ( miniOne, transitionOne  )
+        , two = new Fsm ( miniOne, transitionOne  )
         ;
 
 
@@ -161,13 +161,13 @@ const
         machine = {
                         reactivity : [
                                     //    [ fsm, onStateChange, listenerFsm , action  ]
-                                          [ 'oneFsm', 'active', 'twoFsm', 'activate'  ]
+                                          [ 'one', 'active', 'two', 'activate'  ]
                                     //    [ 'fsm',     'state', 'callbackFn' ]
-                                        , [ 'twoFsm', 'active', 'showme' ]
+                                        , [ 'two', 'active', 'showme' ]
                                     ]
                         , transformers : {
                                         // "from/to" : functionName
-                                        'twoFsm/showme' : 'simple'
+                                        'two/showme' : 'simple'
                                     }       
                     }
       , transformerLib = {
@@ -189,7 +189,7 @@ const
                 console.log (transitionResult)
         } // showme func.
 
-    hub.addFsm ({ oneFsm, twoFsm })
+    hub.addFsm ({ one, two })
     hub.addFunctions ( { showme })
 
 // Start!
