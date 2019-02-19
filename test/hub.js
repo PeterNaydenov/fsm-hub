@@ -460,6 +460,63 @@ it  ( 'Transformer is not a function', () => {
 
 
 
+
+it  ( 'Callback-function with data argument', done  => {
+    const 
+              miniOne = {
+                                init  : 'none'
+                              , table : [
+                                          [ 'none', 'activate', 'active', 'switchOn']
+                                       ]
+                      };
+  
+          // Setup fsm transition libraries
+          const transitionOne = {
+                          switchOn ( task, dependencies, stateObj, dt ) {
+                                      task.done ({ 
+                                                success  : true 
+                                              , response : dt
+                                          })
+                              }
+                  };
+  
+          // Init fsm machines
+          const one = new Fsm ( miniOne, transitionOne  );
+  
+          // Define hub
+          const 
+              machine = {
+                              reactivity : [
+                                                [ 'one', 'active', 'two', 'activate'  ]
+                                              , [ 'one', 'active', 'showme' ]
+                                          ]
+                              , transformers : {
+                                              'one/showme' : 'simple'
+                                          }       
+                          }
+          , transformerLib = {
+                              simple ( state, data ) { return `simple-${state}-${data}` }
+                          }
+          ;
+          // Initialize the hub
+          const hub = new FsmHub ( machine, transformerLib );
+  
+          hub.addFsm ({  one })
+          hub.addFunctions ({
+              showme ( data ) {
+                        expect ( data ).to.equal ( 'simple-active-try' )
+                        done ()
+                    }
+            })
+  
+          // Start!
+          one.update ( 'activate', 'try' )
+  }) // it callback-function with data argument
+
+
+
+
+
 it ( 'Test a Debuger', () => {
         const 
             machine = {
