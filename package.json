@@ -1,6 +1,6 @@
 {
   "name": "@peter.naydenov/fsm-hub",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "FSM orchestration and state-managment tool",
   "main": "src/index.js",
   "scripts": {
