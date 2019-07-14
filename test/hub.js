@@ -183,7 +183,7 @@ it ( 'Use hub-tranformer', done  => {
                             simple : function ( state, resultResponseData ) {
                                             return {
                                                       second : 'second'
-                                                    , state
+                                                    , state 
                                                     , 'answer' : resultResponseData
                                                 }
                                         } 
@@ -194,7 +194,7 @@ it ( 'Use hub-tranformer', done  => {
 
         function showme (transitionResult) {
                     const {
-                            second
+                              second
                             , state
                             , answer 
                         } = transitionResult;
@@ -403,7 +403,7 @@ it ( 'Not registered fsm subscriber', done => {
 
 
 
-it  ( 'Transformer is not a function', () => {
+it ( 'Transformer is not a function', () => {
   const 
             miniOne = {
                               init  : 'none'
@@ -461,12 +461,13 @@ it  ( 'Transformer is not a function', () => {
 
 
 
-it  ( 'Callback-function with data argument', done  => {
+it ( 'Callback-function with data argument', done  => {
     const 
               miniOne = {
                                 init  : 'none'
                               , table : [
-                                          [ 'none', 'activate', 'active', 'switchOn']
+                                            [ 'none', 'activate', 'active', 'switchOn']
+                                          , [ 'active', 'stop', 'none', 'switchOff']
                                        ]
                       };
   
@@ -478,40 +479,148 @@ it  ( 'Callback-function with data argument', done  => {
                                               , response : dt
                                           })
                               }
+                          , switchOff ( task, dependencies, stateObj, dt ) {
+                                      task.done ({ 
+                                                success  : true 
+                                              , response : dt
+                                          })
+                              }
                   };
   
           // Init fsm machines
-          const one = new Fsm ( miniOne, transitionOne  );
+          const 
+                one = new Fsm ( miniOne, transitionOne  )
+              , two = new Fsm ( miniOne, transitionOne  )
+              ;
   
           // Define hub
           const 
               machine = {
                               reactivity : [
                                                 [ 'one', 'active', 'two', 'activate'  ]
-                                              , [ 'one', 'active', 'showme' ]
+                                              , [ 'one', 'active', 'showme'           ]
+                                              , [ 'one', 'none'  , 'two', 'stop'      ]
+                                              , [ 'two', 'none'  , 'final'             ]
                                           ]
                               , transformers : {
                                               'one/showme' : 'simple'
                                           }       
                           }
-          , transformerLib = {
-                              simple ( state, data ) { return `simple-${state}-${data}` }
-                          }
-          ;
+            , transformerLib = {
+                                simple ( state, data ) { return `simple-${state}-${data}` }
+                            }
+            ;
           // Initialize the hub
           const hub = new FsmHub ( machine, transformerLib );
-  
-          hub.addFsm ({  one })
-          hub.addFunctions ({
-              showme ( data ) {
-                        expect ( data ).to.equal ( 'simple-active-try' )
-                        done ()
-                    }
-            })
-  
+          function showme ( data ) {
+                                expect ( data ).to.equal ( 'simple-active-try' )
+                                expect ( two.state == 'active' )
+                                one.update ( 'stop' )
+                } // showme func.
+
+          function final ( data ) {
+                                expect ( two.state ).to.be.equal ( 'none' )
+                                done ()
+                } // final func.
+
+          hub.addFsm ({  one, two })
+          hub.addFunctions ({ showme, final })
           // Start!
           one.update ( 'activate', 'try' )
   }) // it callback-function with data argument
+
+
+
+
+
+it ( 'Check multiple systems'
+//  , () => {
+//     const 
+//             userDescription = {
+//                               init  : 'none'
+//                             , table : [
+//                                           [ 'none'       , 'start'       , 'inProgress' , 'setupUser'       , [ 'ifSpecial', false ]    ]
+//                                         , [ 'inProgress' , 'ifSpecial'   , 'special'    , 'setupSpecialUser', [ false, 'setupNormal']   ]
+//                                         , [ 'inProgress' , 'setupNormal' , 'active'     , 'setupActiveUser'                             ]
+//                                         , [ 'active'     , 'test'        , 'testUser'   , 'setupTestUser'                               ]
+//                                     ]
+//                     }
+//             , screenDescription = {
+//                               init  : 'none'
+//                             , table : [
+//                                           [ 'none', 'start', 'browse', 'startScreen' ]
+//                                         , [ 'browse', 'page', 'browse', 'loadPage'   ]
+                                        
+//                                         , [ 'none'  , 'sync', 'browse', 'syncUserState',  [ 'page', false ] ]
+//                                         , [ 'browse', 'sync', 'browse', 'syncUserState',  [ 'page', false ] ]
+//                                     ]
+//                             , stateData : {
+//                                               user : 'N/A'  // sync with user state
+//                                             , page : 'N/A'  // current active page
+//                                     }
+//                 }
+//             , hubDescription  = {
+//                               reactivity : [
+//                                             [ 'user' , 'none'   , 'screen', 'sync' ]
+//                                           , [ 'user' , 'active' , 'screen', 'sync' ]
+//                                           , [ 'user', 'testUser', 'screen', 'sync' ]
+//                                         ]
+//                             , transformers : {
+//                                             'user/screen' : 'transferUserState'
+//                                         }
+//                 }
+//             ;
+    
+//     const userLib = {
+//               setupUser ( task, dependencies, stateData, dt) {
+//                     console.log ( 'setupUser' )
+//                     task.done ({ success : true })
+//                } // setupUser func.
+//             , setupSpecialUser ( task, dependencies, stateData, dt) {
+//                     console.log ( 'setupSpecialUser' )
+//                     task.done({ success : false })
+//                } // setupSpecialUser func.
+//             , setupActiveUser ( task, dependencies, stateData, dt) {
+//                      console.log ( 'setup Active User' )
+//                      task.done ({ success : true })
+//                } // setupActiveUser func.
+//             , setupTestUser ( task, dependencies, stateData, dt ) {
+//                     console.log ( 'USER: setup test user' )
+//                     task.done ({ success : true })
+//                }
+//         } // userLib 
+//     const screenLib = {
+//               startScreen (task, dependencies, stateData, dt) {
+//                      console.log ( 'SCREEN: startScreen' )
+//                      task.done ({ success : true })
+//                 }
+//             , loadPage (task, dependencies, stateData, dt) {
+//                     console.log ( `SCREEN: loadPage, user - ${stateData.user}`)
+//                     task.done ({ success : true })
+//                 }
+//             , syncUserState (task, dependencies, stateData, dt) {
+//                     console.log ( `SCREEN: Sync user state. ${dt}`)
+//                     stateData.user = dt
+//                     task.done ({ success : true, stateData })
+//                 }
+//         } // screenLib
+//     const hubTransormers = {
+//             transferUserState ( state, response ) {
+//                         return state
+//                 }
+//         } // hubTransformers
+
+//     const
+//           user   = new Fsm ( userDescription, userLib )
+//         , screen = new Fsm ( screenDescription, screenLib )
+//         , hub    = new FsmHub ( hubDescription, hubTransormers )
+//         ;
+
+//     hub.addFsm ({ user, screen })
+//     user.update ( 'start' )
+//     setTimeout ( () =>  user.update ('test'), 300 )
+// }
+) // it check multiple systems
 
 
 

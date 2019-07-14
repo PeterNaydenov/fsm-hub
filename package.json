@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@peter.naydenov/fsm": "2.0.0",
+    "@peter.naydenov/fsm": "2.2.1",
     "chai": "4.2.0",
     "expect.js": "0.3.1",
     "mocha": "6.1.4",
