@@ -9,13 +9,12 @@
   },
   "author": "Peter Naydenov",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@peter.naydenov/fsm": "2.2.1",
-    "chai": "4.2.0",
+    "chai": "4.3.4",
     "expect.js": "0.3.1",
-    "mocha": "7.1.2",
-    "nyc": "15.0.1"
+    "mocha": "8.3.2",
+    "nyc": "15.1.0"
   },
   "keywords": [
     "fsm",
