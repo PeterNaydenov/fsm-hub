@@ -10,7 +10,7 @@
   "author": "Peter Naydenov",
   "license": "MIT",
   "devDependencies": {
-    "@peter.naydenov/fsm": "2.2.1",
+    "@peter.naydenov/fsm": "2.2.2",
     "chai": "4.3.4",
     "expect.js": "0.3.1",
     "mocha": "8.3.2",

@@ -26,7 +26,7 @@ it ( 'Hub structure', () => {
             };
 
         const hub = new FsmHub ( hubDetails )
-        
+
         expect ( hub ).to.have.property ( 'fsm' )
         expect ( hub ).to.have.property ('fnCallbacks')
         expect ( hub ).to.have.property ( 'transformers' )
@@ -169,7 +169,7 @@ it ( 'Use hub-tranformer', done  => {
 
         // Define hub
         const 
-            machine = {
+            hubMachine = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
                                             , [ 'two', 'active', 'showme' ]
@@ -190,8 +190,8 @@ it ( 'Use hub-tranformer', done  => {
                         }
         ;
         // Initialize the hub
-        const hub = new FsmHub ( machine, transformerLib );
-
+        const hub = new FsmHub ( hubMachine, transformerLib );
+        
         function showme (transitionResult) {
                     const {
                               second
@@ -229,15 +229,15 @@ it ( 'Wrong length of reactivity record', () => {
                                             'two/showme' : 'simple'
                                         }       
                         };
-        const originalDebuger = FsmHub.prototype._debuger;
-        FsmHub.prototype._debuger  = function ( str, data ) {
+        const originalDebugger = FsmHub.prototype._debugger;
+        FsmHub.prototype._debugger  = function ( str, data ) {
                                         expect ( str ).to.be.equal ( WRONG_REACTIVITY_RECORD )
                                 }
         const hub = new FsmHub ( hubDetails );
 
         expect ( hub.callbacks ).to.have.property ( 'two/active' )
         expect ( hub.callbacks ['two/active'][0]).to.be.equal ( 'showme' )
-        FsmHub.prototype._debuger = originalDebuger
+        FsmHub.prototype._debugger = originalDebugger
     }) // it wrong reactivity record
 
 
@@ -256,15 +256,15 @@ it ( 'Wrong type of reactivity record', () => {
                                             'two/showme' : 'simple'
                                         }       
                         };
-        const originalDebuger = FsmHub.prototype._debuger;
-        FsmHub.prototype._debuger  = function ( str, data ) {
+        const originalDebugger = FsmHub.prototype._debugger;
+        FsmHub.prototype._debugger  = function ( str, data ) {
                                         expect ( str ).to.be.equal ( WRONG_REACTIVITY_RECORD )
                     }
         const hub = new FsmHub ( hubDetails );
 
         expect ( hub.callbacks ).to.have.property ( 'two/active' )
         expect ( hub.callbacks ['two/active'][0]).to.be.equal ( 'showme' )
-        FsmHub.prototype._debuger = originalDebuger
+        FsmHub.prototype._debugger = originalDebugger
     }) // it wrong reactivity record
 
 
@@ -292,7 +292,7 @@ it ( 'Try to add FSM name that is already registered', () => {
                         };
         // Initialize the hub
         const hub = new FsmHub ( hubDescription );
-        hub._debuger  = function ( str, data ) {
+        hub._debugger  = function ( str, data ) {
                     expect ( str ).to.be.equal ( REGISTERED_FSM_NAME )
                 }
 
@@ -317,7 +317,7 @@ it ( 'Try to add function name that is already registered', () => {
                                         ]
                         };
         const hub = new FsmHub ( machine );
-        hub._debuger  = function ( str, data ) {
+        hub._debugger  = function ( str, data ) {
                     expect ( str ).to.be.equal ( REGISTERED_FUNCTION_NAME )
                 }
 
@@ -390,7 +390,7 @@ it ( 'Not registered fsm subscriber', done => {
         const hub = new FsmHub ( machine, transformerLib );
 
         hub.addFsm ({  one })
-        hub._debuger = function ( str, data ) {
+        hub._debugger = function ( str, data ) {
                 expect ( str ).to.be.equal ( MISSING_FSM )
                 done ()
             }
@@ -448,7 +448,7 @@ it ( 'Transformer is not a function', () => {
         const hub = new FsmHub ( machine, transformerLib );
 
         hub.addFsm ({  one, two })
-        // hub._debuger = function ( str, data ) {
+        // hub._debugger = function ( str, data ) {
         //         expect ( str ).to.be.equal ( MISSING_FSM )
         //         done ()
         //     }
@@ -626,7 +626,7 @@ it ( 'Check multiple systems'
 
 
 
-it ( 'Test a Debuger', () => {
+it ( 'Test a Debugger', () => {
         const 
             machine = {
                             reactivity : [
@@ -636,8 +636,8 @@ it ( 'Test a Debuger', () => {
                             , debug : true
                         };
         const hub = new FsmHub ( machine );
-        hub._debuger ( 'Test for %s', 'debuger' )
-}) // it Test debuger
+        hub._debugger ( 'Test for %s', 'debugger' )
+}) // it Test debugger
 
 }) // describe
 
