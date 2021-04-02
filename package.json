@@ -9,12 +9,19 @@
   },
   "author": "Peter Naydenov",
   "license": "MIT",
+  "dependencies": {
+    "@peter.naydenov/stack": "1.0.0",
+    "ask-for-promise": "1.3.1"
+  },
   "devDependencies": {
-    "@peter.naydenov/fsm": "2.2.2",
+    "@peter.naydenov/fsm": "2.2.3",
     "chai": "4.3.4",
-    "expect.js": "0.3.1",
     "mocha": "8.3.2",
     "nyc": "15.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PeterNaydenov/fsm-hub.git"
   },
   "keywords": [
     "fsm",

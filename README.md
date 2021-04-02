@@ -200,3 +200,30 @@ const
 // { second: 'second', state: 'active', answer: 'try' }
 
 ```
+
+
+
+## Release History
+
+
+
+### 1.0.4 ( 2021-04-02 )
+ - [x] Fix: Duplicated update callback if logic contain a chainAction.
+
+### 1.0.3 ( 2021-03-26 )
+ - [x] Massive code refactoring;
+ - [ ] Bug: Duplicated update callback if logic contain a chainAction.
+
+
+
+
+
+
+ ## Credits
+'@peter.naydenov/fsm-hub' was created by Peter Naydenov.
+
+
+## License
+'@peter.naydenov/fsm-hub' is released under the MIT License.
+
+

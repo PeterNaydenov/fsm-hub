@@ -1,8 +1,7 @@
 const
   FsmHub  = require ('../src/index.js')
 , Fsm     = require ( '@peter.naydenov/fsm')
-, chai    = require ( 'chai' )
-, expect  = require ( 'expect.js')
+, expect  = require ( 'chai' ).expect
 ;
 
 
@@ -14,7 +13,7 @@ const
   , MISSING_FN               = 'Warning: Function "%s" is not registered to the hub.'
   ;
 
-describe ( 'Finite State Machine', () => {
+describe ( 'Fsm Hub', () => {
 
 
 it ( 'Hub structure', () => {
@@ -35,7 +34,7 @@ it ( 'Hub structure', () => {
         expect ( hub ).to.have.property ( 'callbacks' )
 
         expect ( hub.subscribers ).to.have.property ( 'one/active' )
-        expect ( hub.subscribers['one/active'] ).to.be.an.array
+        expect ( hub.subscribers['one/active'] ).to.be.an ( 'array' )
         expect ( hub.subscribers['one/active'][0] ).to.be.equal ( 'two' )
 
         expect ( hub.actions ).to.have.property ( 'one/active/two' )
@@ -98,7 +97,7 @@ it ( 'Add a callback function', () => {
         expect ( activeCallbacks.length ).to.be.equal ( 1 )   // function 'more' should be register only in fnCallbacks.
 
         expect ( hub.callbacks ).to.have.property ( 'two/active' )
-        expect ( hub.callbacks['two/active']).to.be.an.array
+        expect ( hub.callbacks['two/active']).to.be.an ( 'array' )
         expect ( hub.callbacks['two/active'][0]).to.be.equal ( 'showme' )
 
         expect ( hub.fnCallbacks ).to.have.property ( 'showme' )
@@ -507,13 +506,13 @@ it ( 'Callback-function with data argument', done  => {
                                           }       
                           }
             , transformerLib = {
-                                simple ( state, data ) { return `simple-${state}-${data}` }
+                                simple ( state, data ) { return { try: `simple-${state}-${data.try}`} }
                             }
             ;
           // Initialize the hub
           const hub = new FsmHub ( machine, transformerLib );
           function showme ( data ) {
-                                expect ( data ).to.equal ( 'simple-active-try' )
+                                expect ( data.try ).to.equal ( 'simple-active-try' )
                                 expect ( two.state == 'active' )
                                 one.update ( 'stop' )
                 } // showme func.
@@ -526,119 +525,28 @@ it ( 'Callback-function with data argument', done  => {
           hub.addFsm ({  one, two })
           hub.addFunctions ({ showme, final })
           // Start!
-          one.update ( 'activate', 'try' )
+          one.update ( 'activate', { try:'try'} )
   }) // it callback-function with data argument
 
 
 
 
-
-it ( 'Check multiple systems'
-//  , () => {
-//     const 
-//             userDescription = {
-//                               init  : 'none'
-//                             , table : [
-//                                           [ 'none'       , 'start'       , 'inProgress' , 'setupUser'       , [ 'ifSpecial', false ]    ]
-//                                         , [ 'inProgress' , 'ifSpecial'   , 'special'    , 'setupSpecialUser', [ false, 'setupNormal']   ]
-//                                         , [ 'inProgress' , 'setupNormal' , 'active'     , 'setupActiveUser'                             ]
-//                                         , [ 'active'     , 'test'        , 'testUser'   , 'setupTestUser'                               ]
-//                                     ]
-//                     }
-//             , screenDescription = {
-//                               init  : 'none'
-//                             , table : [
-//                                           [ 'none', 'start', 'browse', 'startScreen' ]
-//                                         , [ 'browse', 'page', 'browse', 'loadPage'   ]
-                                        
-//                                         , [ 'none'  , 'sync', 'browse', 'syncUserState',  [ 'page', false ] ]
-//                                         , [ 'browse', 'sync', 'browse', 'syncUserState',  [ 'page', false ] ]
-//                                     ]
-//                             , stateData : {
-//                                               user : 'N/A'  // sync with user state
-//                                             , page : 'N/A'  // current active page
-//                                     }
-//                 }
-//             , hubDescription  = {
-//                               reactivity : [
-//                                             [ 'user' , 'none'   , 'screen', 'sync' ]
-//                                           , [ 'user' , 'active' , 'screen', 'sync' ]
-//                                           , [ 'user', 'testUser', 'screen', 'sync' ]
-//                                         ]
-//                             , transformers : {
-//                                             'user/screen' : 'transferUserState'
-//                                         }
-//                 }
-//             ;
-    
-//     const userLib = {
-//               setupUser ( task, dependencies, stateData, dt) {
-//                     console.log ( 'setupUser' )
-//                     task.done ({ success : true })
-//                } // setupUser func.
-//             , setupSpecialUser ( task, dependencies, stateData, dt) {
-//                     console.log ( 'setupSpecialUser' )
-//                     task.done({ success : false })
-//                } // setupSpecialUser func.
-//             , setupActiveUser ( task, dependencies, stateData, dt) {
-//                      console.log ( 'setup Active User' )
-//                      task.done ({ success : true })
-//                } // setupActiveUser func.
-//             , setupTestUser ( task, dependencies, stateData, dt ) {
-//                     console.log ( 'USER: setup test user' )
-//                     task.done ({ success : true })
-//                }
-//         } // userLib 
-//     const screenLib = {
-//               startScreen (task, dependencies, stateData, dt) {
-//                      console.log ( 'SCREEN: startScreen' )
-//                      task.done ({ success : true })
-//                 }
-//             , loadPage (task, dependencies, stateData, dt) {
-//                     console.log ( `SCREEN: loadPage, user - ${stateData.user}`)
-//                     task.done ({ success : true })
-//                 }
-//             , syncUserState (task, dependencies, stateData, dt) {
-//                     console.log ( `SCREEN: Sync user state. ${dt}`)
-//                     stateData.user = dt
-//                     task.done ({ success : true, stateData })
-//                 }
-//         } // screenLib
-//     const hubTransormers = {
-//             transferUserState ( state, response ) {
-//                         return state
-//                 }
-//         } // hubTransformers
-
-//     const
-//           user   = new Fsm ( userDescription, userLib )
-//         , screen = new Fsm ( screenDescription, screenLib )
-//         , hub    = new FsmHub ( hubDescription, hubTransormers )
-//         ;
-
-//     hub.addFsm ({ user, screen })
-//     user.update ( 'start' )
-//     setTimeout ( () =>  user.update ('test'), 300 )
-// }
-) // it check multiple systems
-
-
-
-
-
-it ( 'Test a Debugger', () => {
-        const 
-            machine = {
-                            reactivity : [
-                                              [ 'one', 'active', 'two', 'activate'  ]
-                                            , [ 'two', 'active', 'showme' ]
-                                        ]
-                            , debug : true
-                        };
-        const hub = new FsmHub ( machine );
-        hub._debugger ( 'Test for %s', 'debugger' )
+  it ( 'Test a Debugger', () => {
+    const 
+        machine = {
+                        reactivity : [
+                                          [ 'one', 'active', 'two', 'activate'  ]
+                                        , [ 'two', 'active', 'showme' ]
+                                    ]
+                        , debug : true
+                    };
+    const hub = new FsmHub ( machine );
+    hub._debugger ( 'Test for %s', 'debugger' )
 }) // it Test debugger
 
+
+
+  
 }) // describe
 
 
