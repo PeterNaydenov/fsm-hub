@@ -175,7 +175,7 @@ const
                                         return {
                                                   second : 'second'
                                                 , state
-                                                , 'answer' : resultResponseData
+                                                , 'answer' : resultResponseData.response
                                             }
                                     } 
                     }
@@ -186,14 +186,14 @@ const
 
     function showme (transitionResult) {
                 console.log ( 'ShowMe' )
-                console.log (transitionResult)
+                console.log ( transitionResult.answer )
         } // showme func.
 
     hub.addFsm ({ one, two })
     hub.addFunctions ( { showme })
 
 // Start!
-    oneFsm.update ( 'activate', 'try' )
+    oneFsm.update ( 'activate', { response:'try'} )
 
 // Result on the screen:
 // ShowMe
