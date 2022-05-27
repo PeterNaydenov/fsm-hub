@@ -206,13 +206,15 @@ const
 ## Release History
 
 
+### 1.0.5 ( 2022-05-27 )
+ - [x] Just a dependency update;
 
 ### 1.0.4 ( 2021-04-02 )
- - [x] Fix: Duplicated update callback if logic contain a chainAction.
+ - [x] Fix: Duplicated update callback if logic contain a chainAction;
 
 ### 1.0.3 ( 2021-03-26 )
  - [x] Massive code refactoring;
- - [ ] Bug: Duplicated update callback if logic contain a chainAction.
+ - [ ] Bug: Duplicated update callback if logic contain a chainAction;
 
 
 
