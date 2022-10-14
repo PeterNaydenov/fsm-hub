@@ -14,7 +14,7 @@
     "ask-for-promise": "1.3.1"
   },
   "devDependencies": {
-    "@peter.naydenov/fsm": "2.2.4",
+    "@peter.naydenov/fsm": "3.0.0",
     "chai": "4.3.6",
     "mocha": "10.0.0",
     "nyc": "15.1.0"
