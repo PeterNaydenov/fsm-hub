@@ -1,14 +1,13 @@
 {
   "name": "@peter.naydenov/fsm-hub",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "FSM orchestration and state-managment tool",
   "main": "src/main.js",
   "type": "module",
-  
   "scripts": {
     "test": "mocha test",
     "cover": "c8 mocha test",
-    "build" : "vite build"
+    "build": "vite build"
   },
   "author": "Peter Naydenov",
   "license": "MIT",
