@@ -1,11 +1,9 @@
-const
-      _setTransitions = require ( './_setTransitions' )
-    , _debugger       = require ( './_debugger'       )
-    , _callback       = require ( './_callback'       )
+import _setTransitions from './_setTransitions.js'
+import _debugger       from './_debugger.js'
+import _callback       from './_callback.js'
 
-    , addFsm       = require ( './addFsm'       )
-    , addFunctions = require ( './addFunctions' )
-   ;
+import addFsm          from './addFsm.js'
+import addFunctions    from './addFunctions.js'
 
 const fn = {
                   _setTransitions
@@ -18,6 +16,6 @@ const fn = {
 
 
 
-module.exports = fn
+export default fn
 
 

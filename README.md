@@ -205,6 +205,10 @@ const
 
 ## Release History
 
+### 2.0.0 ( 2022-11-16 )
+- [x] The library become a ES module;
+
+
 
 ### 1.0.5 ( 2022-05-27 )
  - [x] Just a dependency update;

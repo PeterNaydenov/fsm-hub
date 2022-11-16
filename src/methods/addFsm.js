@@ -1,4 +1,4 @@
-const askForPromise = require("ask-for-promise")
+import askForPromise from "ask-for-promise"
 
 function addFsm ( hub, msg ) {
 return function ( ins ) {
@@ -28,10 +28,9 @@ return function ( ins ) {
                                         hubUpdateWatcher ( name, state, response )
                             } // reactivityComplete func.
 
-
-
-                        function hubUpdateWatcher (name,state,response) {
+                        function hubUpdateWatcher ( name, state, response ) {
                                     let executeReactivity;
+                                    
                                     if ( !hub.lock ) {
                                                 hub.lock = true
                                                 executeReactivity = askForPromise ()
@@ -40,17 +39,17 @@ return function ( ins ) {
                                                 return
                                         }
 
-                                    if ( response && response.___internalFlag ) {
+                                    if ( response ) {
                                                 if ( hub.haveInternalRequest ) {
                                                                 hub.cacheInternal.push ( [[ name, state, response ]])
                                                                 return
-                                                        }
+                                                    }
                                                 let reactivityTask = askForPromise ();
                                                 reactivityTask.onComplete ( z => reactivityComplete ( true )  )   // complete of internal reaction
                                                 hub.haveInternalRequest = true;
                                                 hub._callback ( reactivityTask, name, state, response )
                                                 return
-                                       }
+                                        }
                                     hub.cache.push ( [[ name, state, response ]])
                             } // hubUpdateWatcher func.
 
@@ -63,6 +62,6 @@ return function ( ins ) {
 
 
 
-module.exports = addFsm
+export default addFsm
 
 

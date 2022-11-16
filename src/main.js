@@ -1,9 +1,7 @@
-const 
-      methods       = require ( './methods/index'        )
-    , msg           = require ( './msg'                  )
-    , askForPromise = require ( 'ask-for-promise'        )
-    , stack         = require ( '@peter.naydenov/stack'  )
-    ;
+import methods from './methods/index.js'
+import msg from './msg.js'
+import askForPromise from 'ask-for-promise'
+import stack from '@peter.naydenov/stack'
 
 function FsmHub ( machine, transformerLib ) {
    const 
@@ -21,7 +19,9 @@ function FsmHub ( machine, transformerLib ) {
         hub.reactivityTask = false
         hub.askForPromise = askForPromise
 
-        fnKeys.forEach ( k => hub[k] = methods[k](hub,msg)   )   // Attach methods to fsmHub
+        fnKeys.forEach ( k => {   // Attach methods to fsmHub
+                  hub[k] = methods[k]( hub, msg )   
+            })   
 
         const { transformers, subscribers, actions, callbacks } = hub._setTransitions ( machine, transformerLib );
         hub.transformers = transformers  // Data transformation function with format 'fsm/fsmListener' or 'fsm/function'
@@ -32,6 +32,6 @@ function FsmHub ( machine, transformerLib ) {
 
 
 
-module.exports = FsmHub
+export default FsmHub
 
 

@@ -1,8 +1,6 @@
-const
-  FsmHub  = require ('../src/index.js')
-, Fsm     = require ( '@peter.naydenov/fsm')
-, expect  = require ( 'chai' ).expect
-;
+import FsmHub from '../src/main.js'
+import Fsm from '@peter.naydenov/fsm'
+import { expect } from 'chai'
 
 describe ( 'Fsm Hub', () => {
 

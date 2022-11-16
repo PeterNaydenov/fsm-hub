@@ -1,9 +1,6 @@
-const
-  FsmHub  = require ('../src/index.js')
-, Fsm     = require ( '@peter.naydenov/fsm')
-, expect  = require ( 'chai' ).expect
-;
-
+import FsmHub from '../src/main.js'
+import Fsm from '@peter.naydenov/fsm'
+import { expect } from 'chai'
 
 const
     WRONG_REACTIVITY_RECORD  = 'Error: Wrong reactivity record on row %s.'
@@ -140,7 +137,7 @@ it ( 'Add a fsm', () => {
 
 
 
-it ( 'Use hub-tranformer', done  => {
+it ( 'Use hub-transformer', done  => {
         // Define Fsm machines
         const 
             miniOne = {
@@ -152,10 +149,10 @@ it ( 'Use hub-tranformer', done  => {
 
         // Setup fsm transition libraries
         const transitionOne = {
-                        switchOn ( task, dependencies, stateObj, dt ) {
+                        switchOn ( task, dependencies, stateObj, data ) {
                                     task.done ({ 
                                               success  : true 
-                                            , response : dt
+                                            , response : data
                                         })
                             }
                 };

@@ -54,6 +54,6 @@ return function ( {reactivity, transformers}, transformerLib={} ) {
 
 
 
-module.exports = _setTransitions
+export default _setTransitions
 
 

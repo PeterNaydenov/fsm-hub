@@ -2,10 +2,13 @@
   "name": "@peter.naydenov/fsm-hub",
   "version": "1.0.6",
   "description": "FSM orchestration and state-managment tool",
-  "main": "src/index.js",
+  "main": "src/main.js",
+  "type": "module",
+  
   "scripts": {
     "test": "mocha test",
-    "cover": "nyc mocha test"
+    "cover": "c8 mocha test",
+    "build" : "vite build"
   },
   "author": "Peter Naydenov",
   "license": "MIT",
@@ -14,10 +17,10 @@
     "ask-for-promise": "1.3.1"
   },
   "devDependencies": {
-    "@peter.naydenov/fsm": "3.0.0",
+    "@peter.naydenov/fsm": "4.0.1",
+    "c8": "^7.12.0",
     "chai": "4.3.7",
-    "mocha": "10.1.0",
-    "nyc": "15.1.0"
+    "mocha": "10.1.0"
   },
   "repository": {
     "type": "git",
@@ -28,7 +31,7 @@
     "state-managment",
     "orchestration"
   ],
-  "nyc": {
+  "c8": {
     "include": [
       "src/**/*.js"
     ],

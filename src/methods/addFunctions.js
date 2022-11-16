@@ -11,6 +11,6 @@ return function ( ins ) {
 
 
 
-module.exports = addFunctions
+export default addFunctions
 
 

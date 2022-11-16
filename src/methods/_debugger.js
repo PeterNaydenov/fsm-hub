@@ -5,6 +5,6 @@ return function ( str, data ) {
 
 
 
-module.exports = _debugger
+export default _debugger
 
 

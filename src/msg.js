@@ -7,6 +7,6 @@ const msg = {   // Error and warnings messages
             };
 
 
-module.exports = msg
+export default msg
 
 
