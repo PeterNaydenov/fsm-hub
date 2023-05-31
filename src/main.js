@@ -11,8 +11,8 @@ function FsmHub ( machine, transformerLib ) {
         hub.fsm = {}                        // Fsm's placeholder
         hub.fnCallbacks = {}                // Callback functions place
         hub.debug = machine.debug || false
-        hub.cache = stack ( 'FIFO' )
-        hub.cacheInternal = stack ( 'FIFO' )
+        hub.cache = stack ({ type : 'FIFO' })
+        hub.cacheInternal = stack ({ type: 'FIFO' })
         hub.wait = []
         hub.lock = false
         hub.haveInternalRequest = false
