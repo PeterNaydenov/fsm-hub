@@ -205,6 +205,12 @@ const
 
 ## Release History
 
+
+### 2.0.2 ( 2022-11-17 )
+- [x] Works with `@peter.naydenov/fsm` version 5 and above;
+
+
+
 ### 2.0.0 ( 2022-11-16 )
 - [x] The library become a ES module;
 

@@ -45,13 +45,13 @@ it ( 'Hub structure', () => {
 
 it ( 'Add a fsm', () => {
         const 
-            mini = {
+            miniMachine = {
                               init : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                     ]
                     };
-        const machine = new Fsm ( mini );
+        const machine = new Fsm ( miniMachine );
         const 
             hubDescription = {
                             reactivity : [
@@ -111,7 +111,7 @@ it ( 'Add a fsm', () => {
         const 
             mini = {
                               init : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                     ]
                     };
@@ -142,14 +142,14 @@ it ( 'Use hub-transformer', done  => {
         const 
             miniOne = {
                               init  : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                      ]
                     };
 
         // Setup fsm transition libraries
         const transitionOne = {
-                        switchOn ( task, dependencies, stateObj, data ) {
+                        switchOn ( {task}, data ) {
                                     task.done ({ 
                                               success  : true 
                                             , response : data
@@ -194,7 +194,7 @@ it ( 'Use hub-transformer', done  => {
                             , state
                             , answer 
                         } = transitionResult;
-
+console.log ( second, state, answer )
                     expect ( second ).to.be.equal ( 'second' )
                     expect ( state ).to.be.equal ( 'active' )
                     expect ( answer ).to.be.equal ( 'try' )
@@ -270,7 +270,7 @@ it ( 'Try to add FSM name that is already registered', () => {
         const 
             miniOne = {
                               init  : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                      ]
                     };
@@ -339,17 +339,17 @@ it ( 'Not registered fsm subscriber', done => {
         const 
             miniOne = {
                               init  : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                      ]
                     };
 
         // Setup fsm transition libraries
         const transitionOne = {
-                        switchOn ( task, dependencies, stateObj, dt ) {
+                        switchOn ( {task}, data ) {
                                     task.done ({ 
                                               success  : true 
-                                            , response : dt
+                                            , response : data
                                         })
                             }
                 };
@@ -403,17 +403,17 @@ it ( 'Transformer is not a function', () => {
   const 
             miniOne = {
                               init  : 'none'
-                            , table : [
+                            , behavior : [
                                         [ 'none', 'activate', 'active', 'switchOn']
                                      ]
                     };
 
         // Setup fsm transition libraries
         const transitionOne = {
-                        switchOn ( task, dependencies, stateObj, dt ) {
+                        switchOn ( {task}, data ) {
                                     task.done ({ 
                                               success  : true 
-                                            , response : dt
+                                            , response : data
                                         })
                             }
                 };
@@ -461,7 +461,7 @@ it ( 'Callback-function with data argument', done  => {
     const 
               miniOne = {
                                 init  : 'none'
-                              , table : [
+                              , behavior : [
                                             [ 'none', 'activate', 'active', 'switchOn']
                                           , [ 'active', 'stop', 'none', 'switchOff']
                                        ]
@@ -469,16 +469,16 @@ it ( 'Callback-function with data argument', done  => {
   
           // Setup fsm transition libraries
           const transitionOne = {
-                          switchOn ( task, dependencies, stateObj, dt ) {
+                          switchOn ( {task}, data ) {
                                       task.done ({ 
                                                 success  : true 
-                                              , response : dt
+                                              , response : data
                                           })
                               }
-                          , switchOff ( task, dependencies, stateObj, dt ) {
+                          , switchOff ( {task}, data ) {
                                       task.done ({ 
                                                 success  : true 
-                                              , response : dt
+                                              , response : data
                                           })
                               }
                   };
@@ -510,12 +510,12 @@ it ( 'Callback-function with data argument', done  => {
           const hub = new FsmHub ( machine, transformerLib );
           function showme ( data ) {
                                 expect ( data.try ).to.equal ( 'simple-active-try' )
-                                expect ( two.state == 'active' )
+                                expect ( two.getState () == 'active' )
                                 one.update ( 'stop' )
                 } // showme func.
 
           function final ( data ) {
-                                expect ( two.state ).to.be.equal ( 'none' )
+                                expect ( two.getState() ).to.be.equal ( 'none' )
                                 done ()
                 } // final func.
 
