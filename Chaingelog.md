@@ -1,6 +1,12 @@
 ## Release History
 
 
+
+### 2.0.3 ( 2023-10-21 )
+- [x] Dependency update. Ask-for-promise - v.1.4.0;
+
+
+
 ### 2.0.2 ( 2022-11-17 )
 - [x] Works with `@peter.naydenov/fsm` version 5 and above;
 
