@@ -206,6 +206,10 @@ const
 ## Release History
 
 
+### 2.0.4 ( 2022-11-17 )
+- [x] Dependencies update. @peter.naydenov/fsm version 5.1.1;
+
+
 ### 2.0.2 ( 2022-11-17 )
 - [x] Works with `@peter.naydenov/fsm` version 5 and above;
 
