@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@peter.naydenov/stack": "2.0.0",
-    "ask-for-promise": "1.4.0"
+    "ask-for-promise": "1.5.0"
   },
   "devDependencies": {
     "@peter.naydenov/fsm": "5.1.1",
