@@ -2,6 +2,12 @@
 
 
 
+### 2.0.5 ( 2023-10-21 )
+- [x] Dependency update. @peter.naydenov/fsm - v.5.1.2;
+
+
+
+
 ### 2.0.3 ( 2023-10-21 )
 - [x] Dependency update. Ask-for-promise - v.1.4.0;
 
