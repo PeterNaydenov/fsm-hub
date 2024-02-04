@@ -1,46 +1,61 @@
 {
   "name": "@peter.naydenov/fsm-hub",
-  "version": "2.0.5",
   "description": "FSM orchestration and state-managment tool",
-  "main": "src/main.js",
+  "version": "2.0.5",
+  "license": "MIT",
+  "author": "Peter Naydenov",
+  "main": "./dist/fsm-hub.umd.js",
   "type": "module",
+  "exports": {
+          ".": {
+                    "import": "./dist/fsm-hub.esm.mjs",
+                    "require": "./dist/fsm-hub.cjs",
+                    "default": "./dist/fsm-hub.umd.js"
+                  },
+              "./package.json": "./package.json",
+              "./dist/*": "./dist/*",
+              "./src/*": "./src/*"
+    },
   "scripts": {
     "test": "mocha test",
     "cover": "c8 mocha test",
-    "build": "vite build"
+    "build": "rollup -c"
   },
-  "author": "Peter Naydenov",
-  "license": "MIT",
+  
   "dependencies": {
-    "@peter.naydenov/stack": "3.0.0",
-    "ask-for-promise": "2.0.3"
-  },
+          "@peter.naydenov/stack": "3.0.0",
+          "ask-for-promise": "2.0.3"
+    },
   "devDependencies": {
     "@peter.naydenov/fsm": "5.2.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "c8": "^9.1.0",
     "chai": "5.0.3",
-    "mocha": "10.2.0"
+    "mocha": "10.2.0",
+    "rollup": "^4.9.6"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/PeterNaydenov/fsm-hub.git"
   },
-  "keywords": [
-    "fsm",
-    "state-managment",
-    "orchestration"
-  ],
   "c8": {
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "node_modules",
-      "test"
-    ],
-    "reporter": [
-      "lcov",
-      "text-summary"
-    ]
-  }
+          "include": [
+            "src/**/*.js"
+          ],
+          "exclude": [
+            "node_modules",
+            "test"
+          ],
+          "reporter": [
+            "lcov",
+            "text-summary"
+          ]
+    },
+  "keywords": [
+                  "fsm",
+                  "state-managment",
+                  "orchestration"
+            ]
 }

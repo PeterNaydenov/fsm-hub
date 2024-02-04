@@ -1,10 +1,25 @@
 ## Release History
 
 
+### 2.1.0 ( 2024-02-04)
+- [x] Dependency update. ask-for-promise@2.0.3;
+- [x] Dependency update. @peter.naydenov/stack@3.0.0;
+- [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.0;
+- [x] Dev dependencies updates. Chai@5.0.3;
+- [x] Dev dependencies updates. C8@9.1.0;
+- [x] Folder 'dist' was added to the project. Includes commonjs, umd and esm versions of the library;
+- [x] Package.json: "exports" section was added. Allows you to use package as commonjs or es6 module without additional configuration;
+- [x] Rollup was added to the project. Used to build the library versions;
+
+
 
 ### 2.0.5 ( 2023-10-21 )
 - [x] Dependency update. @peter.naydenov/fsm - v.5.1.2;
 
+
+
+### 2.0.4 ( 2022-11-17 )
+- [x] Dependencies update. @peter.naydenov/fsm version 5.1.1;
 
 
 
@@ -32,6 +47,12 @@
 ### 1.0.3 ( 2021-03-26 )
  - [x] Massive code refactoring;
  - [ ] Bug: Duplicated update callback if logic contain a chainAction;
+
+
+
+
+
+
 
 
 
