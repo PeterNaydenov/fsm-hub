@@ -1,31 +1,30 @@
 {
   "name": "@peter.naydenov/fsm-hub",
   "description": "FSM orchestration and state-managment tool",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "license": "MIT",
   "author": "Peter Naydenov",
   "main": "./dist/fsm-hub.umd.js",
   "type": "module",
   "exports": {
-          ".": {
-                    "import": "./dist/fsm-hub.esm.mjs",
-                    "require": "./dist/fsm-hub.cjs",
-                    "default": "./dist/fsm-hub.umd.js"
-                  },
-              "./package.json": "./package.json",
-              "./dist/*": "./dist/*",
-              "./src/*": "./src/*"
+    ".": {
+      "import": "./dist/fsm-hub.esm.mjs",
+      "require": "./dist/fsm-hub.cjs",
+      "default": "./dist/fsm-hub.umd.js"
     },
+    "./package.json": "./package.json",
+    "./dist/*": "./dist/*",
+    "./src/*": "./src/*"
+  },
   "scripts": {
     "test": "mocha test",
     "cover": "c8 mocha test",
     "build": "rollup -c"
   },
-  
   "dependencies": {
-          "@peter.naydenov/stack": "3.0.0",
-          "ask-for-promise": "2.0.3"
-    },
+    "@peter.naydenov/stack": "3.0.0",
+    "ask-for-promise": "2.0.3"
+  },
   "devDependencies": {
     "@peter.naydenov/fsm": "5.2.0",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -41,21 +40,21 @@
     "url": "https://github.com/PeterNaydenov/fsm-hub.git"
   },
   "c8": {
-          "include": [
-            "src/**/*.js"
-          ],
-          "exclude": [
-            "node_modules",
-            "test"
-          ],
-          "reporter": [
-            "lcov",
-            "text-summary"
-          ]
-    },
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "node_modules",
+      "test"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ]
+  },
   "keywords": [
-                  "fsm",
-                  "state-managment",
-                  "orchestration"
-            ]
+    "fsm",
+    "state-managment",
+    "orchestration"
+  ]
 }
