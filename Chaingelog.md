@@ -1,6 +1,14 @@
 ## Release History
 
 
+
+### 2.1.1 ( 2024-12-09)
+- [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.1;
+- [x] Dev dependencies updates. Rollup@4.28.1;
+- [x] Dev dependencies updates. Mocha@11.0.1;
+
+
+
 ### 2.1.0 ( 2024-02-04)
 - [x] Dependency update. ask-for-promise@2.0.3;
 - [x] Dependency update. @peter.naydenov/stack@3.0.0;
