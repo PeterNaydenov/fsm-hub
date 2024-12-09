@@ -1,7 +1,7 @@
 {
   "name": "@peter.naydenov/fsm-hub",
   "description": "FSM orchestration and state-managment tool",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "author": "Peter Naydenov",
   "main": "./dist/fsm-hub.umd.js",
