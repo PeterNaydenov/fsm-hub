@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@peter.naydenov/stack": "3.0.0",
-    "ask-for-promise": "2.0.3"
+    "ask-for-promise": "3.0.1"
   },
   "devDependencies": {
-    "@peter.naydenov/fsm": "5.2.1",
+    "@peter.naydenov/fsm": "5.2.2",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
