@@ -2,6 +2,12 @@
 
 
 
+### 2.1.2 ( 2024-11-13)
+- [x] Dependency update. Ask-for-promise@3.1.0;
+- [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.4;
+
+
+
 ### 2.1.1 ( 2024-12-09)
 - [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.1;
 - [x] Dev dependencies updates. Rollup@4.28.1;
