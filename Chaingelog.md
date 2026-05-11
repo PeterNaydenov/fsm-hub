@@ -2,7 +2,7 @@
 
 
 
-### 2.1.3 ( 2026-05-11)
+### 2.1.4 ( 2026-05-11)
 - [x] Dependency update. ask-for-promise@3.1.1;
 - [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.5;
 
