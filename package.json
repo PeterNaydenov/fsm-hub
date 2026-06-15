@@ -60,5 +60,8 @@
     "fsm",
     "state-managment",
     "orchestration"
-  ]
+  ],
+  "allowScripts": {
+    "fsevents@2.3.3": true
+  }
 }
