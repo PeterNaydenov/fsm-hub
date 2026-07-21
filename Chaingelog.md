@@ -1,6 +1,11 @@
 ## Release History
 
 
+### 2.1.5 ( 2026-07-21)
+- [x] Dependency update. ask-for-promise@3.2.0;
+- [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.6;
+
+
 
 ### 2.1.4 ( 2026-05-11)
 - [x] Dependency update. ask-for-promise@3.1.1;
