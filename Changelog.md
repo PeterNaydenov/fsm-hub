@@ -1,6 +1,14 @@
 ## Release History
 
 
+### 2.1.6 ( 2026-07-22)
+- [x] Fix: `_callback.js` crashed when a callback rule fired with a `null` response (or a transformer returning `null`). Guarded the `.answer` access so the placeholder-clear no-ops and the callback still runs.
+- [x] Fix: `MISSING_FSM` debugger call logged the whole subscribers array instead of the missing name. Now passes the specific missing entry.
+- [x] Tests: 3 regression cases added (1 for the `MISSING_FSM` data, 2 for the null-response crashes). 14 → 17 passing;
+- [x] Dev dependencies updates. @peter.naydenov/fsm - v.5.2.7;
+
+
+
 ### 2.1.5 ( 2026-07-21)
 - [x] Dependency update. ask-for-promise@3.2.0;
 - [x] Dev dependency update. @peter.naydenov/fsm - v.5.2.6;
