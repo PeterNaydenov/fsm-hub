@@ -529,7 +529,7 @@ it ( 'Callback-function with data argument', done  => {
 
 
   it ( 'Test a Debugger', () => {
-    const 
+    const
         machine = {
                         reactivity : [
                                           [ 'one', 'active', 'two', 'activate'  ]
@@ -540,6 +540,142 @@ it ( 'Callback-function with data argument', done  => {
     const hub = new FsmHub ( machine );
     hub._debugger ( 'Test for %s', 'debugger' )
 }) // it Test debugger
+
+
+
+
+    // =====================================================================
+    // BUG REGRESSIONS
+    // =====================================================================
+
+    // -----------------------------------------------------------------
+    // BUG A — _callback.js passed `fsmSubscriber` (the whole array of
+    // subscriber names) as the data arg to MISSING_FSM, instead of
+    // `subscriberName` (the specific missing one). The warning message
+    // therefore looked like
+    //   `Warning: Fsm "%s" is not registered to the hub. [ 'two' ]`
+    // instead of the intended
+    //   `Warning: Fsm "%s" is not registered to the hub. two`.
+    // The existing test "Not registered fsm subscriber" only checks the
+    // `str` half of the call, so the wrong data was never noticed.
+    // -----------------------------------------------------------------
+    it ( 'BUG A — MISSING_FSM is logged with the missing name, not the array', done => {
+        const
+              mini = {
+                          init : 'none'
+                        , behavior : [
+                                        [ 'none', 'activate', 'active', 'switchOn' ]
+                                    ]
+                        }
+            , lib  = {
+                          switchOn ({ task }, data) {
+                                  task.done ({ success : true, response : data })
+                              }
+                        }
+            , one = new Fsm ( mini, lib )
+            ;
+        const hub = new FsmHub ({
+                        reactivity : [
+                                          [ 'one', 'active', 'two', 'activate' ]
+                                        ]
+                    });
+        const calls = [];
+        hub._debugger = ( str, data ) => calls.push ({ str, data });
+        hub.addFsm ({ one });   // 'two' is intentionally NOT registered
+
+        one.update ( 'activate', 'try' );
+
+        setTimeout ( () => {
+            const missing = calls.find ( c => c.str === MISSING_FSM )
+            expect ( missing, 'MISSING_FSM was not logged' ).to.exist
+            // The data should be the missing name 'two' (a string),
+            // NOT the whole subscribers array.
+            expect ( missing.data ).to.equal ( 'two' )
+            done ()
+        }, 50 )
+    }) // it BUG A
+
+    // -----------------------------------------------------------------
+    // BUG B — _callback.js crashed with
+    //   `TypeError: Cannot read properties of null (reading 'answer')`
+    // when a callback rule (length 3 in `reactivity`) was triggered
+    // and the FSM's response was `null` (and no transformer was
+    // configured, or the transformer itself returned `null`).
+    //
+    // The existing test "Callback-function with data argument" always
+    // passes a non-null `response`, so this path was never exercised.
+    // -----------------------------------------------------------------
+    it ( 'BUG B — callback rule with null response does not crash', done => {
+        const
+              mini = {
+                          init : 'none'
+                        , behavior : [
+                                        [ 'none', 'activate', 'active', 'switchOn' ]
+                                    ]
+                        }
+            // Transition returns response: null. No transformer.
+            , lib  = {
+                          switchOn ({ task }) {
+                                  task.done ({ success : true, response : null })
+                              }
+                        }
+            , one = new Fsm ( mini, lib )
+            ;
+        const hub = new FsmHub ({
+                        reactivity : [
+                                          // length-3 rule = callback, no fsm subscriber
+                                          [ 'one', 'active', 'showme' ]
+                                        ]
+                    });
+        function showme ( data ) {
+                            // The crash happened BEFORE this was called.
+                            // We just want to assert: the callback fires
+                            // and `data` is what the response was (null).
+                            expect ( data ).to.equal ( null )
+                            done ()
+                        } // showme func.
+        hub.addFsm    ({ one });
+        hub.addFunctions ({ showme });
+
+        one.update ( 'activate' );
+    }) // it BUG B — null response
+
+    it ( 'BUG B — callback rule with a transformer that returns null does not crash', done => {
+        const
+              mini = {
+                          init : 'none'
+                        , behavior : [
+                                        [ 'none', 'activate', 'active', 'switchOn' ]
+                                    ]
+                        }
+            , lib  = {
+                          switchOn ({ task }, data) {
+                                  task.done ({ success : true, response : data })
+                              }
+                        }
+            , one = new Fsm ( mini, lib )
+            ;
+        const hub = new FsmHub ({
+                        reactivity : [
+                                          [ 'one', 'active', 'showme' ]
+                                        ]
+                        , transformers : {
+                                            'one/showme' : 'nullTransformer'
+                                        }
+                    }, {
+                        // A transformer that returns null. This used to
+                        // crash in _callback.js's `data.answer` check.
+                        nullTransformer () { return null }
+                    });
+        function showme ( data ) {
+                            expect ( data ).to.equal ( null )
+                            done ()
+                        } // showme func.
+        hub.addFsm    ({ one });
+        hub.addFunctions ({ showme });
+
+        one.update ( 'activate', 'try' );
+    }) // it BUG B — null transformer
 
 
 
