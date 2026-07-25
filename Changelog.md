@@ -1,6 +1,14 @@
 ## Release History
 
 
+
+### 2.1.7 ( 2026-07-25)
+- [x] Dependency update. @peter.naydenov/stack - v.3.0.1;
+- [x] Migrating the testing framework from mocha to vitest;
+- [x] Migrating the coverage framework from c8 to vitest/coverage-v8;
+
+
+
 ### 2.1.6 ( 2026-07-22)
 - [x] Fix: `_callback.js` crashed when a callback rule fired with a `null` response (or a transformer returning `null`). Guarded the `.answer` access so the placeholder-clear no-ops and the callback still runs.
 - [x] Fix: `MISSING_FSM` debugger call logged the whole subscribers array instead of the missing name. Now passes the specific missing entry.
