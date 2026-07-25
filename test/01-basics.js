@@ -1,6 +1,6 @@
+import { describe, it, expect } from 'vitest'
 import FsmHub from '../src/main.js'
 import Fsm from '@peter.naydenov/fsm'
-import { expect } from 'chai'
 
 const
     WRONG_REACTIVITY_RECORD  = 'Error: Wrong reactivity record on row %s.'
@@ -14,7 +14,7 @@ describe ( 'Fsm Hub', () => {
 
 
 it ( 'Hub structure', () => {
-        const 
+        const
         hubDetails = {
             reactivity : [
                                 [ 'one', 'active', 'two', 'activate' ]
@@ -23,28 +23,29 @@ it ( 'Hub structure', () => {
 
         const hub = new FsmHub ( hubDetails )
 
-        expect ( hub ).to.have.property ( 'fsm' )
-        expect ( hub ).to.have.property ('fnCallbacks')
-        expect ( hub ).to.have.property ( 'transformers' )
-        expect ( hub ).to.have.property ( 'subscribers' )
-        expect ( hub ).to.have.property ( 'actions' )
-        expect ( hub ).to.have.property ( 'callbacks' )
+        expect ( hub ).toHaveProperty ( 'fsm' )
+        expect ( hub ).toHaveProperty ('fnCallbacks')
+        expect ( hub ).toHaveProperty ( 'transformers' )
+        expect ( hub ).toHaveProperty ( 'subscribers' )
+        expect ( hub ).toHaveProperty ( 'actions' )
+        expect ( hub ).toHaveProperty ( 'callbacks' )
 
-        expect ( hub.subscribers ).to.have.property ( 'one/active' )
-        expect ( hub.subscribers['one/active'] ).to.be.an ( 'array' )
-        expect ( hub.subscribers['one/active'][0] ).to.be.equal ( 'two' )
+        expect ( hub.subscribers ).toHaveProperty ( 'one/active' )
+        expect ( Array.isArray ( hub.subscribers['one/active'] ) ).toBe ( true )
+        expect ( hub.subscribers['one/active'][0] ).toBe ( 'two' )
 
-        expect ( hub.actions ).to.have.property ( 'one/active/two' )
-        expect ( hub.actions['one/active/two']).to.be.equal ( 'activate' )
-        
+        expect ( hub.actions ).toHaveProperty ( 'one/active/two' )
+        expect ( hub.actions['one/active/two']).toBe ( 'activate' )
+
     }) // it hub structure
 
 
 
 
 
+
 it ( 'Add a fsm', () => {
-        const 
+        const
             miniMachine = {
                               init : 'none'
                             , behavior : [
@@ -52,7 +53,7 @@ it ( 'Add a fsm', () => {
                                     ]
                     };
         const machine = new Fsm ( miniMachine );
-        const 
+        const
             hubDescription = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -61,13 +62,14 @@ it ( 'Add a fsm', () => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         }
         const hub = new FsmHub ( hubDescription );
         hub.addFsm ( { one:machine })
 
-        expect ( hub.fsm ).to.have.property ( 'one' )
+        expect ( hub.fsm ).toHaveProperty ( 'one' )
     }) // register a fsm
+
 
 
 
@@ -80,35 +82,36 @@ it ( 'Add a callback function', () => {
         function more ( data ) {
                 console.log ( data )
             } // more func.
-        const 
+        const
             hubDescription = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
                                             , [ 'two', 'active', 'showme' ]
-                                        ]      
+                                        ]
                         }
         const hub = new FsmHub ( hubDescription );
         hub.addFunctions ( { showme, more })
 
-        const activeCallbacks = Object.keys ( hub.callbacks );        
-        expect ( activeCallbacks.length ).to.be.equal ( 1 )   // function 'more' should be register only in fnCallbacks.
+        const activeCallbacks = Object.keys ( hub.callbacks );
+        expect ( activeCallbacks.length ).toBe ( 1 )   // function 'more' should be register only in fnCallbacks.
 
-        expect ( hub.callbacks ).to.have.property ( 'two/active' )
-        expect ( hub.callbacks['two/active']).to.be.an ( 'array' )
-        expect ( hub.callbacks['two/active'][0]).to.be.equal ( 'showme' )
+        expect ( hub.callbacks ).toHaveProperty ( 'two/active' )
+        expect ( Array.isArray ( hub.callbacks['two/active'] ) ).toBe ( true )
+        expect ( hub.callbacks['two/active'][0]).toBe ( 'showme' )
 
-        expect ( hub.fnCallbacks ).to.have.property ( 'showme' )
-        expect ( hub.fnCallbacks ).to.have.property ( 'more' )
-        expect ( typeof hub.fnCallbacks['showme']).to.be.equal ( 'function' )
-        expect ( typeof hub.fnCallbacks['more']).to.be.equal ( 'function' )
+        expect ( hub.fnCallbacks ).toHaveProperty ( 'showme' )
+        expect ( hub.fnCallbacks ).toHaveProperty ( 'more' )
+        expect ( typeof hub.fnCallbacks['showme']).toBe ( 'function' )
+        expect ( typeof hub.fnCallbacks['more']).toBe ( 'function' )
     }) // register a fsm
 
 
 
 
 
+
 it ( 'Add a fsm', () => {
-        const 
+        const
             mini = {
                               init : 'none'
                             , behavior : [
@@ -116,7 +119,7 @@ it ( 'Add a fsm', () => {
                                     ]
                     };
         const machine = new Fsm ( mini );
-        const 
+        const
             hubDescription = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -125,21 +128,22 @@ it ( 'Add a fsm', () => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         }
         const hub = new FsmHub ( hubDescription );
         hub.addFsm ( { one:machine })
 
-        expect ( hub.fsm ).to.have.property ( 'one' )
+        expect ( hub.fsm ).toHaveProperty ( 'one' )
     }) // register a fsm
 
 
 
 
 
-it ( 'Use hub-transformer', done  => {
+
+it ( 'Use hub-transformer', () => new Promise ( resolve => {
         // Define Fsm machines
-        const 
+        const
             miniOne = {
                               init  : 'none'
                             , behavior : [
@@ -150,8 +154,8 @@ it ( 'Use hub-transformer', done  => {
         // Setup fsm transition libraries
         const transitionOne = {
                         switchOn ( {task}, data ) {
-                                    task.done ({ 
-                                              success  : true 
+                                    task.done ({
+                                              success  : true
                                             , response : data
                                         })
                             }
@@ -164,7 +168,7 @@ it ( 'Use hub-transformer', done  => {
             ;
 
         // Define hub
-        const 
+        const
             hubMachine = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -173,32 +177,32 @@ it ( 'Use hub-transformer', done  => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         }
         , transformerLib = {
                             simple : function ( state, resultResponseData ) {
                                             return {
                                                       second : 'second'
-                                                    , state 
+                                                    , state
                                                     , 'answer' : resultResponseData
                                                 }
-                                        } 
+                                        }
                         }
         ;
         // Initialize the hub
         const hub = new FsmHub ( hubMachine, transformerLib );
-        
+
         function showme (transitionResult) {
                     const {
                               second
                             , state
-                            , answer 
+                            , answer
                         } = transitionResult;
 console.log ( second, state, answer )
-                    expect ( second ).to.be.equal ( 'second' )
-                    expect ( state ).to.be.equal ( 'active' )
-                    expect ( answer ).to.be.equal ( 'try' )
-                    done ()
+                    expect ( second ).toBe ( 'second' )
+                    expect ( state ).toBe ( 'active' )
+                    expect ( answer ).toBe ( 'try' )
+                    resolve ()
             } // showme func.
 
         hub.addFsm ({  one, two })
@@ -206,7 +210,8 @@ console.log ( second, state, answer )
 
         // Start!
         one.update ( 'activate', 'try' )
-    }) // it use hub-transformer
+    })) // it use hub-transformer
+
 
 
 
@@ -214,7 +219,7 @@ console.log ( second, state, answer )
 
 it ( 'Wrong length of reactivity record', () => {
         // Define hub
-        const 
+        const
             hubDetails = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate', 'aloha'  ]
@@ -223,16 +228,16 @@ it ( 'Wrong length of reactivity record', () => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         };
         const originalDebugger = FsmHub.prototype._debugger;
         FsmHub.prototype._debugger  = function ( str, data ) {
-                                        expect ( str ).to.be.equal ( WRONG_REACTIVITY_RECORD )
+                                        expect ( str ).toBe ( WRONG_REACTIVITY_RECORD )
                                 }
         const hub = new FsmHub ( hubDetails );
 
-        expect ( hub.callbacks ).to.have.property ( 'two/active' )
-        expect ( hub.callbacks ['two/active'][0]).to.be.equal ( 'showme' )
+        expect ( hub.callbacks ).toHaveProperty ( 'two/active' )
+        expect ( hub.callbacks ['two/active'][0]).toBe ( 'showme' )
         FsmHub.prototype._debugger = originalDebugger
     }) // it wrong reactivity record
 
@@ -240,8 +245,9 @@ it ( 'Wrong length of reactivity record', () => {
 
 
 
+
 it ( 'Wrong type of reactivity record', () => {
-        const 
+        const
             hubDetails = {
                             reactivity : [
                                               { 'one' : 'something' }
@@ -250,24 +256,25 @@ it ( 'Wrong type of reactivity record', () => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         };
         const originalDebugger = FsmHub.prototype._debugger;
         FsmHub.prototype._debugger  = function ( str, data ) {
-                                        expect ( str ).to.be.equal ( WRONG_REACTIVITY_RECORD )
+                                        expect ( str ).toBe ( WRONG_REACTIVITY_RECORD )
                     }
         const hub = new FsmHub ( hubDetails );
 
-        expect ( hub.callbacks ).to.have.property ( 'two/active' )
-        expect ( hub.callbacks ['two/active'][0]).to.be.equal ( 'showme' )
+        expect ( hub.callbacks ).toHaveProperty ( 'two/active' )
+        expect ( hub.callbacks ['two/active'][0]).toBe ( 'showme' )
         FsmHub.prototype._debugger = originalDebugger
     }) // it wrong reactivity record
 
 
 
 
+
 it ( 'Try to add FSM name that is already registered', () => {
-        const 
+        const
             miniOne = {
                               init  : 'none'
                             , behavior : [
@@ -275,11 +282,11 @@ it ( 'Try to add FSM name that is already registered', () => {
                                      ]
                     };
 
-        
+
         const one = new Fsm ( miniOne );
 
         // Define hub
-        const 
+        const
             hubDescription = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -289,23 +296,24 @@ it ( 'Try to add FSM name that is already registered', () => {
         // Initialize the hub
         const hub = new FsmHub ( hubDescription );
         hub._debugger  = function ( str, data ) {
-                    expect ( str ).to.be.equal ( REGISTERED_FSM_NAME )
+                    expect ( str ).toBe ( REGISTERED_FSM_NAME )
                 }
 
         hub.addFsm ({one})
         hub.addFsm ({one})
 
         const fsmList = Object.keys ( hub.fsm );
-        expect ( fsmList ).to.have.length ( 1 )
-        expect ( fsmList[0]).to.be.equal ( 'one' )
+        expect ( fsmList ).toHaveLength ( 1 )
+        expect ( fsmList[0]).toBe ( 'one' )
 
     }) // it registered fsm name
 
 
 
 
+
 it ( 'Try to add function name that is already registered', () => {
-        const 
+        const
             machine = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -314,11 +322,11 @@ it ( 'Try to add function name that is already registered', () => {
                         };
         const hub = new FsmHub ( machine );
         hub._debugger  = function ( str, data ) {
-                    expect ( str ).to.be.equal ( REGISTERED_FUNCTION_NAME )
+                    expect ( str ).toBe ( REGISTERED_FUNCTION_NAME )
                 }
 
 
-        function dummy ( data ) { 
+        function dummy ( data ) {
                 console.log ( 'dummy function' )
             }
 
@@ -326,8 +334,8 @@ it ( 'Try to add function name that is already registered', () => {
         hub.addFunctions ({ dummy })
 
         const fnCallbacks = Object.keys ( hub.fnCallbacks );
-        expect ( fnCallbacks ).to.have.length (1)
-        expect ( fnCallbacks[0]).to.be.equal ( 'dummy' )
+        expect ( fnCallbacks ).toHaveLength (1)
+        expect ( fnCallbacks[0]).toBe ( 'dummy' )
     }) // it registered function name
 
 
@@ -335,8 +343,8 @@ it ( 'Try to add function name that is already registered', () => {
 
 
 
-it ( 'Not registered fsm subscriber', done => {
-        const 
+it ( 'Not registered fsm subscriber', () => new Promise ( resolve => {
+        const
             miniOne = {
                               init  : 'none'
                             , behavior : [
@@ -347,8 +355,8 @@ it ( 'Not registered fsm subscriber', done => {
         // Setup fsm transition libraries
         const transitionOne = {
                         switchOn ( {task}, data ) {
-                                    task.done ({ 
-                                              success  : true 
+                                    task.done ({
+                                              success  : true
                                             , response : data
                                         })
                             }
@@ -361,7 +369,7 @@ it ( 'Not registered fsm subscriber', done => {
             ;
 
         // Define hub
-        const 
+        const
             machine = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -370,7 +378,7 @@ it ( 'Not registered fsm subscriber', done => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         }
         , transformerLib = {
                             simple : function ( state, resultResponseData ) {
@@ -379,7 +387,7 @@ it ( 'Not registered fsm subscriber', done => {
                                                     , state
                                                     , 'answer' : resultResponseData
                                                 }
-                                        } 
+                                        }
                         }
         ;
         // Initialize the hub
@@ -387,20 +395,21 @@ it ( 'Not registered fsm subscriber', done => {
 
         hub.addFsm ({  one })
         hub._debugger = function ( str, data ) {
-                expect ( str ).to.be.equal ( MISSING_FSM )
-                done ()
+                expect ( str ).toBe ( MISSING_FSM )
+                resolve ()
             }
 
         // Start!
         one.update ( 'activate', 'try' )
-}) // it not registered fsm
+})) // it not registered fsm
+
 
 
 
 
 
 it ( 'Transformer is not a function', () => {
-  const 
+  const
             miniOne = {
                               init  : 'none'
                             , behavior : [
@@ -411,8 +420,8 @@ it ( 'Transformer is not a function', () => {
         // Setup fsm transition libraries
         const transitionOne = {
                         switchOn ( {task}, data ) {
-                                    task.done ({ 
-                                              success  : true 
+                                    task.done ({
+                                              success  : true
                                             , response : data
                                         })
                             }
@@ -425,7 +434,7 @@ it ( 'Transformer is not a function', () => {
             ;
 
         // Define hub
-        const 
+        const
             machine = {
                             reactivity : [
                                               [ 'one', 'active', 'two', 'activate'  ]
@@ -434,7 +443,7 @@ it ( 'Transformer is not a function', () => {
                             , transformers : {
                                             // "from/to" : functionName
                                             'two/showme' : 'simple'
-                                        }       
+                                        }
                         }
         , transformerLib = {
                             simple : { fake : 'fake transformer' }   // if transformer is not a function
@@ -445,7 +454,7 @@ it ( 'Transformer is not a function', () => {
 
         hub.addFsm ({  one, two })
         // hub._debugger = function ( str, data ) {
-        //         expect ( str ).to.be.equal ( MISSING_FSM )
+        //         expect ( str ).toBe ( MISSING_FSM )
         //         done ()
         //     }
 
@@ -457,8 +466,9 @@ it ( 'Transformer is not a function', () => {
 
 
 
-it ( 'Callback-function with data argument', done  => {
-    const 
+
+it ( 'Callback-function with data argument', () => new Promise ( resolve => {
+    const
               miniOne = {
                                 init  : 'none'
                               , behavior : [
@@ -466,31 +476,31 @@ it ( 'Callback-function with data argument', done  => {
                                           , [ 'active', 'stop', 'none', 'switchOff']
                                        ]
                       };
-  
+
           // Setup fsm transition libraries
           const transitionOne = {
                           switchOn ( {task}, data ) {
-                                      task.done ({ 
-                                                success  : true 
+                                      task.done ({
+                                                success  : true
                                               , response : data
                                           })
                               }
                           , switchOff ( {task}, data ) {
-                                      task.done ({ 
-                                                success  : true 
+                                      task.done ({
+                                                success  : true
                                               , response : data
                                           })
                               }
                   };
-  
+
           // Init fsm machines
-          const 
+          const
                 one = new Fsm ( miniOne, transitionOne  )
               , two = new Fsm ( miniOne, transitionOne  )
               ;
-  
+
           // Define hub
-          const 
+          const
               machine = {
                               reactivity : [
                                                 [ 'one', 'active', 'two', 'activate'  ]
@@ -500,7 +510,7 @@ it ( 'Callback-function with data argument', done  => {
                                           ]
                               , transformers : {
                                               'one/showme' : 'simple'
-                                          }       
+                                          }
                           }
             , transformerLib = {
                                 simple ( state, data ) { return { try: `simple-${state}-${data.try}`} }
@@ -509,21 +519,21 @@ it ( 'Callback-function with data argument', done  => {
           // Initialize the hub
           const hub = new FsmHub ( machine, transformerLib );
           function showme ( data ) {
-                                expect ( data.try ).to.equal ( 'simple-active-try' )
+                                expect ( data.try ).toBe ( 'simple-active-try' )
                                 expect ( two.getState () == 'active' )
                                 one.update ( 'stop' )
                 } // showme func.
 
           function final ( data ) {
-                                expect ( two.getState() ).to.be.equal ( 'none' )
-                                done ()
+                                expect ( two.getState() ).toBe ( 'none' )
+                                resolve ()
                 } // final func.
 
           hub.addFsm ({  one, two })
           hub.addFunctions ({ showme, final })
           // Start!
           one.update ( 'activate', { try:'try'} )
-  }) // it callback-function with data argument
+  })) // it callback-function with data argument
 
 
 
@@ -559,7 +569,7 @@ it ( 'Callback-function with data argument', done  => {
     // The existing test "Not registered fsm subscriber" only checks the
     // `str` half of the call, so the wrong data was never noticed.
     // -----------------------------------------------------------------
-    it ( 'BUG A — MISSING_FSM is logged with the missing name, not the array', done => {
+    it ( 'BUG A — MISSING_FSM is logged with the missing name, not the array', () => new Promise ( resolve => {
         const
               mini = {
                           init : 'none'
@@ -587,13 +597,13 @@ it ( 'Callback-function with data argument', done  => {
 
         setTimeout ( () => {
             const missing = calls.find ( c => c.str === MISSING_FSM )
-            expect ( missing, 'MISSING_FSM was not logged' ).to.exist
+            expect ( missing, 'MISSING_FSM was not logged' ).toBeDefined ()
             // The data should be the missing name 'two' (a string),
             // NOT the whole subscribers array.
-            expect ( missing.data ).to.equal ( 'two' )
-            done ()
+            expect ( missing.data ).toBe ( 'two' )
+            resolve ()
         }, 50 )
-    }) // it BUG A
+    })) // it BUG A
 
     // -----------------------------------------------------------------
     // BUG B — _callback.js crashed with
@@ -605,7 +615,7 @@ it ( 'Callback-function with data argument', done  => {
     // The existing test "Callback-function with data argument" always
     // passes a non-null `response`, so this path was never exercised.
     // -----------------------------------------------------------------
-    it ( 'BUG B — callback rule with null response does not crash', done => {
+    it ( 'BUG B — callback rule with null response does not crash', () => new Promise ( resolve => {
         const
               mini = {
                           init : 'none'
@@ -631,16 +641,16 @@ it ( 'Callback-function with data argument', done  => {
                             // The crash happened BEFORE this was called.
                             // We just want to assert: the callback fires
                             // and `data` is what the response was (null).
-                            expect ( data ).to.equal ( null )
-                            done ()
+                            expect ( data ).toBeNull ()
+                            resolve ()
                         } // showme func.
         hub.addFsm    ({ one });
         hub.addFunctions ({ showme });
 
         one.update ( 'activate' );
-    }) // it BUG B — null response
+    })) // it BUG B — null response
 
-    it ( 'BUG B — callback rule with a transformer that returns null does not crash', done => {
+    it ( 'BUG B — callback rule with a transformer that returns null does not crash', () => new Promise ( resolve => {
         const
               mini = {
                           init : 'none'
@@ -668,18 +678,17 @@ it ( 'Callback-function with data argument', done  => {
                         nullTransformer () { return null }
                     });
         function showme ( data ) {
-                            expect ( data ).to.equal ( null )
-                            done ()
+                            expect ( data ).toBeNull ()
+                            resolve ()
                         } // showme func.
         hub.addFsm    ({ one });
         hub.addFunctions ({ showme });
 
         one.update ( 'activate', 'try' );
-    }) // it BUG B — null transformer
+    })) // it BUG B — null transformer
 
 
 
-  
+
 }) // describe
-
 

@@ -1,11 +1,11 @@
+import { describe, it, expect } from 'vitest'
 import FsmHub from '../src/main.js'
 import Fsm from '@peter.naydenov/fsm'
-import { expect } from 'chai'
 
 describe ( 'Fsm Hub', () => {
 
-  it ( 'Check multiple systems', done => {
-    
+  it ( 'Check multiple systems', () => new Promise ( resolve => {
+
     /**
      *  Description:
      *    Create a 3 fsm systems - human, spy, and recorder
@@ -14,7 +14,7 @@ describe ( 'Fsm Hub', () => {
      *    - Recorder: Storage for bad news. When messages are 3 will stop with the recording and will call function "TimeForChange"
      */
 
-    const 
+    const
           recorderDescription = {  // Description of the recorder
                               init  : 'empty'
                             , behavior : [
@@ -60,28 +60,28 @@ describe ( 'Fsm Hub', () => {
     const
             humanLib = {
                           feel_happy ({task}, data ) {
-                                    task.done ({ 
-                                                      success : true 
+                                    task.done ({
+                                                      success : true
                                                     , response : data
                                                 })
                             }
-                        , feel_bad ( {task}, data ) { 
-                                    task.done ({ 
-                                                  success : true 
+                        , feel_bad ( {task}, data ) {
+                                    task.done ({
+                                                  success : true
                                                 , response: data
                                             })
                             }
                 }
             , spyLib = {
                           onBad ( {task}, data  ) {
-                                    task.done ({ 
-                                                  success   : true 
+                                    task.done ({
+                                                  success   : true
                                                 , response  : data
                                             })
                             }
                         , onGood ( {task}, data ) {
-                                    task.done ({ 
-                                                  success : true 
+                                    task.done ({
+                                                  success : true
                                                 , response : data
                                             })
                             }
@@ -90,8 +90,8 @@ describe ( 'Fsm Hub', () => {
                           add_a_warning ( { task, extractList }, data ) {
                                     const  [ reasons ]  = extractList (['reasons']);
                                     if ( !reasons.includes(data.response) )   reasons.push ( data.response )
-                                    task.done ({ 
-                                              success : true 
+                                    task.done ({
+                                              success : true
                                             , stateData : { reasons }
                                             , response : data
                                         })
@@ -103,9 +103,9 @@ describe ( 'Fsm Hub', () => {
                             }
                 }
             , hubLib = {
-                            emotion2spy ( state,response) { 
+                            emotion2spy ( state,response) {
                                                 return { response }
-                                    }  
+                                    }
                           , spy2record  ( state, response ) { return response }
                 }
             ;
@@ -117,24 +117,24 @@ describe ( 'Fsm Hub', () => {
             , theHub   = new FsmHub ( hubDescription , hubLib  )
             ;
     let result = false
-    
-            
+
+
     function timeForChange ( state, response ) {
                         result = 'DONE'
         }
 
     function test ( state, response ) {
-                    expect ( result ).to.be.equal ( 'DONE' )
-                    expect ( theHub.cache.isEmpty ()         ).to.be.true
-                    expect ( theHub.cacheInternal.isEmpty () ).to.be.true
+                    expect ( result ).toBe ( 'DONE' )
+                    expect ( theHub.cache.isEmpty ()         ).toBe ( true )
+                    expect ( theHub.cacheInternal.isEmpty () ).toBe ( true )
                     let [ rec ] = recorder.extractList (['reasons'], { as: 'std'})
-                    
-                    expect ( rec ).to.be.an ( 'array' ) 
-                    expect ( rec ).to.have.length ( 3 )
-                    expect ( rec[0] ).to.be.equal ( 'Car crash'      )
-                    expect ( rec[1] ).to.be.equal ( 'Airplane crash' )
-                    expect ( rec[2] ).to.be.equal ( 'Storm'          )
-                    done ()                    
+
+                    expect ( Array.isArray ( rec ) ).toBe ( true )
+                    expect ( rec ).toHaveLength ( 3 )
+                    expect ( rec[0] ).toBe ( 'Car crash'      )
+                    expect ( rec[1] ).toBe ( 'Airplane crash' )
+                    expect ( rec[2] ).toBe ( 'Storm'          )
+                    resolve ()
         }
 
     theHub.addFsm ({ human, spy, recorder })
@@ -145,7 +145,7 @@ describe ( 'Fsm Hub', () => {
     human.update ( 'badNews', 'Airplane crash' )
     human.update ( 'badNews', 'Storm' )
 
-}) // it check multiple systems
+})) // it check multiple systems
 
 
 
@@ -153,5 +153,4 @@ describe ( 'Fsm Hub', () => {
 
 
 }) // describe
-
 
