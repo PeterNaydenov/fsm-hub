@@ -2,6 +2,11 @@
 
 
 
+### 2.1.8 ( 2026-09-03)
+- [x] Dependency update. @peter.naydenov/fsm - v.5.2.10;
+
+
+
 ### 2.1.7 ( 2026-07-25)
 - [x] Dependency update. @peter.naydenov/stack - v.3.0.1;
 - [x] Migrating the testing framework from mocha to vitest;
