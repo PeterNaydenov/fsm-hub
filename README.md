@@ -203,6 +203,16 @@ const
 
 
 
+## TypeScript Declarations
+
+TypeScript types are generated from the JSDoc comments in `src` and included in
+the package. Both the `types` field and the package exports point to
+`dist/types/main.d.ts`.
+
+Run `npm run build:types` to generate declarations only, or `npm run build` to
+generate declarations and JavaScript bundles. Run `npm run test:types` to check
+that a TypeScript consumer can use the generated API.
+
 ## Links
 
 - [Release History](https://github.com/PeterNaydenov/fsm-hub/blob/master/Chaingelog.md)

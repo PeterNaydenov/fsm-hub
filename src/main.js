@@ -82,6 +82,11 @@ import stack from '@peter.naydenov/stack'
  */
 
 /**
+ * Constructible entry point, including methods attached dynamically to each hub.
+ * @typedef {{new(machine: HubDescription, transformerLib?: TransformerLibrary): HubContext}} FsmHubConstructor
+ */
+
+/**
  * Create a hub that reacts to updates from named finite state machines.
  * Register machines with `addFsm()` and listeners with `addFunctions()` before
  * triggering updates. Each instance owns its registration and reaction tables.
@@ -133,6 +138,6 @@ function FsmHub ( machine, transformerLib ) {
 
 
 
-export default FsmHub
+export default /** @type {FsmHubConstructor} */ (FsmHub)
 
 
