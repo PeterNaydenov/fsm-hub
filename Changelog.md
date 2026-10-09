@@ -1,6 +1,15 @@
 ## Release History
 
 
+
+### 2.2.0 ( 2026-10-09)
+- [x] Dependency update. @peter.naydenov/fsm - v.5.3.0;
+- [x] Rewrite of jsdoc comments;
+- [x] Typescript generates d.ts files from jsdoc comments;
+- [x] Skill 'fsm-hub' was created;
+
+
+
 ### 2.1.9 ( 2026-09-26)
 - [x] Dependency update. @peter.naydenov/fsm - v.5.2.11;
 
