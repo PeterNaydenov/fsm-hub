@@ -1,0 +1,35 @@
+{
+  "skill": "fsm-hub",
+  "evals": [
+    {
+      "id": "orchestrate-machines",
+      "prompt": "Use @peter.naydenov/fsm-hub to activate a worker when a controller becomes active, then report the worker's response with its state. Show how to wait for the report.",
+      "expected_behavior": [
+        "Uses a four-element FSM rule and a three-element callback rule with consistent registered names.",
+        "Maps worker/report to a named transformer receiving (state, response).",
+        "Registers both machines and the callback before the first update.",
+        "Waits for an application-owned completion signal from report rather than assuming the controller update awaits the entire hub."
+      ]
+    },
+    {
+      "id": "diagnose-missing-and-null-listeners",
+      "prompt": "My hub callback is declared as (state, response), but response is undefined. Some rules never run and the source can return null. Diagnose this without changing library behavior.",
+      "expected_behavior": [
+        "Explains that hub callbacks receive one data argument; only transformers receive state and response separately.",
+        "Checks rule lengths, source state, listener registrations, and transformer names.",
+        "Enables debug logging to identify missing registrations or malformed rows.",
+        "Preserves null input for function callbacks and distinguishes it from the internal marker used for falsy subscriber-FSM input."
+      ]
+    },
+    {
+      "id": "maintain-generated-types",
+      "prompt": "Add a documented hub method and make it available to TypeScript consumers in this repository.",
+      "expected_behavior": [
+        "Updates the source method, method registry, and HubContext JSDoc to match the requested API.",
+        "Generates declarations from src rather than editing dist/types by hand.",
+        "Checks the constructor's dynamically attached methods through the package's public type entry point.",
+        "Runs relevant runtime tests, npm run test:types, and npm run build."
+      ]
+    }
+  ]
+}

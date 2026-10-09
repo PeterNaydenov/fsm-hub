@@ -213,6 +213,12 @@ Run `npm run build:types` to generate declarations only, or `npm run build` to
 generate declarations and JavaScript bundles. Run `npm run test:types` to check
 that a TypeScript consumer can use the generated API.
 
+## Agent Skill
+
+The shared [fsm-hub skill](skills/fsm-hub/SKILL.md) provides agent instructions,
+API contracts, and a complete orchestration example. It lives in `skills/fsm-hub`
+so repository and installed-package agents can read the same files.
+
 ## Links
 
 - [Release History](https://github.com/PeterNaydenov/fsm-hub/blob/master/Chaingelog.md)
