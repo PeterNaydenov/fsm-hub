@@ -1,4 +1,22 @@
+/**
+ * Bind compilation of reactivity rules to a hub.
+ * @private
+ * @param {import('../main.js').HubContext} hub - Hub used to report invalid rules.
+ * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
+ * @returns {(machine: import('../main.js').HubDescription, transformerLib?: import('../main.js').TransformerLibrary) => import('../main.js').ReactionTables} Bound table compiler.
+ */
 function _setTransitions ( hub, msg ) {
+/**
+ * Compile three-element callback rules and four-element FSM rules into lookup tables.
+ * Non-array rows and rows of other lengths are skipped with a diagnostic using
+ * their one-based row number. Listener lists retain rule order and duplicates;
+ * the last action wins for a repeated `source/state/subscriber` key. Transformer
+ * names absent from the supplied library are omitted.
+ * @private
+ * @param {import('../main.js').HubDescription} machine - Reactivity and transformer configuration.
+ * @param {import('../main.js').TransformerLibrary} [transformerLib={}] - Functions by name.
+ * @returns {import('../main.js').ReactionTables} Compiled listener, action, and transformer tables.
+ */
 return function ( {reactivity, transformers}, transformerLib={} ) {
     let 
           mod = {}

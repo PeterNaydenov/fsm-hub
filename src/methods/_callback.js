@@ -1,6 +1,32 @@
 import askForPromise from "ask-for-promise"
 
+/**
+ * Bind reaction dispatch to a hub.
+ * @private
+ * @param {import('../main.js').HubContext} hub - Hub with compiled tables and registered listeners.
+ * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
+ * @returns {(task: import('ask-for-promise').AskObject, fsmName: string, state: string, response?: any) => void} Bound reaction dispatcher.
+ */
 function _callback ( hub, msg ) {
+/**
+ * Start subscribed FSM actions, then invoke callback functions in rule order.
+ * Each listener receives its configured transformer's output or the original
+ * response. Falsy FSM input is replaced with `{ ___internalFlag: true }`;
+ * callbacks receive falsy input unchanged. A callback's `answer` is cleared if
+ * it contains that internal marker, which can mutate the supplied data object.
+ * Missing listeners are skipped with a diagnostic.
+ *
+ * Complete the task after subscriber update promises resolve and callbacks have
+ * been invoked. Callback return values and promises are ignored. With no
+ * listeners, complete immediately. Errors are not caught: a thrown listener or
+ * rejected subscriber promise can leave the reaction task incomplete.
+ * @private
+ * @param {import('ask-for-promise').AskObject} task - Reaction task completed through `done()`.
+ * @param {string} fsmName - Registered source FSM name.
+ * @param {string} state - Source FSM's state after its update.
+ * @param {*} [response] - Source FSM's update response.
+ * @returns {void}
+ */
 return function _callback ( task, fsmName, state, response ) {
     const 
           itemKey        = `${fsmName}/${state}`
