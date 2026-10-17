@@ -1,5 +1,5 @@
 /**
- * Bind FSM registration and update scheduling to a hub.
+ * Bind FSM registration to a hub.
  * @param {import('../main.js').HubContext} hub - Hub instance and reaction queues.
  * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
  * @returns {(ins: Record<string, import('../main.js').RegisteredFsm>) => void} Bound registration method.

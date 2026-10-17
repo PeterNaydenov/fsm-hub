@@ -5,11 +5,17 @@
 ### 3.0.0 ( 2026-10-17)
 - [x] Breaking: Dependency update. @peter.naydenov/fsm - v.6.0.0. The fsm engine moved to dt-toolbox 8, so fsm-hub gets a major version together with fsm;
 - [x] Breaking: CommonJS types. `require` now resolves to `dist/types/main.d.cts` with `export =`, which matches `module.exports = FsmHub` in `dist/fsm-hub.cjs`. Named types are on the namespace: `FsmHub.HubDescription`. Before, CommonJS consumers got the ESM types, so `require(...).default` passed the type check but was `undefined` at runtime. Checked with `@arethetypeswrong/cli`: node10, node16 (CJS and ESM) and bundler pass;
+- [x] Breaking: The hub ignores updates without a successful transition: unknown actions and transitions with `success: false`. Before, they triggered the reactions for the unchanged state again. A successful transition to the same state still triggers reactions. Registered FSMs must support `on('positive', fn)`;
+- [x] Breaking: A thrown callback or transformer, or a rejected subscriber update, is logged with `console.error` (also without `debug`), and the hub keeps working. Before, the error was not caught and the hub stopped reacting;
+- [x] Fix: The hub stopped reacting for good when an update came in during a chain reaction (for example a subscriber transition without `response`, plus any other update). The hub now runs one reaction at a time. Updates from FSMs that the current reaction updates go first, then other updates in FIFO order. `hub.haveInternalRequest` is replaced by `hub.updating`;
+- [x] Fix: An update with a `response` that came during a reaction ran at once, and when it finished it released the lock of the reaction that was still running;
+- [x] Fix: FSMs, callbacks and transformers can use names from `Object.prototype` like `constructor` or `toString`. Before, they were reported as already registered, or an unregistered `valueOf` callback called `Object.prototype.valueOf` and crashed;
 - [x] Dependency update. @peter.naydenov/stack - v.3.0.2;
 - [x] Dependency update. ask-for-promise - v.3.2.1;
 - [x] Package: A `files` list in `package.json`. Tests, configs and `AGENTS.md` are no longer published (tarball 27 KB → 21 KB);
 - [x] Package: `prepublishOnly` runs the tests and the type tests, then builds the bundles;
 - [x] Tests: Type test for CommonJS consumers (`import FsmHub = require(...)`);
+- [x] Tests: Regression tests for the scheduler, listener errors, prototype names and failed transitions. 17 → 30 tests;
 
 
 

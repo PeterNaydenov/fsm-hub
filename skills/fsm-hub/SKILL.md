@@ -11,7 +11,7 @@ the application's machine names, states, actions, and integration choices.
 ## Workflow
 
 1. Inspect existing machines, hub configuration, and installed package version.
-   The references describe 2.1.x; resolve differences against installed source,
+   The references describe 3.x; resolve differences against installed source,
    JSDoc, and declarations.
 2. Map each observed source state to an action in another FSM or a function
    callback. Use `[source, state, subscriber, action]` for FSMs and

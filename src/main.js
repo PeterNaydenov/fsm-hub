@@ -42,7 +42,9 @@ import stack from '@peter.naydenov/stack'
 /**
  * The FSM interface required for hub registration.
  * @typedef {Object} RegisteredFsm
- * @property {(event: 'update', listener: (state: string, response?: any) => void) => void} on - Register an update listener.
+ * @property {(event: 'positive' | 'update', listener: (state: string, response?: any) => void) => void} on - Register
+ * a listener. The hub listens to `positive` (a successful transition) and `update`
+ * (the update is complete). It reacts only to updates with a successful transition.
  * @property {(action: string, data?: any) => Promise<any>} update - Execute an
  * action and resolve with its response.
  */
@@ -67,7 +69,8 @@ import stack from '@peter.naydenov/stack'
  * @property {import('@peter.naydenov/stack').Stack} cacheInternal - FIFO queue of internal updates, drained first.
  * @property {Array<*>} wait - Reserved storage initialized to an empty array.
  * @property {boolean} lock - Whether a reaction is in progress.
- * @property {boolean} haveInternalRequest - Whether an internal reaction is in progress.
+ * @property {Set<string>} updating - FSM names the running reaction updates. Their
+ * updates are internal and wait in `cacheInternal`.
  * @property {boolean} reactivityTask - Reserved flag initialized to false.
  * @property {typeof askForPromise} askForPromise - Promise-task factory.
  * @property {TransformerLibrary} transformers - Functions keyed by `source/listener`.
@@ -78,6 +81,7 @@ import stack from '@peter.naydenov/stack'
  * @property {ReturnType<typeof methods.addFunctions>} addFunctions - Register named callbacks.
  * @property {ReturnType<typeof methods._setTransitions>} _setTransitions - Compile reaction tables.
  * @property {ReturnType<typeof methods._callback>} _callback - Dispatch an update to its listeners.
+ * @property {ReturnType<typeof methods._schedule>} _schedule - Run reactions one at a time.
  * @property {ReturnType<typeof methods._debugger>} _debugger - Log diagnostics when enabled.
  */
 
@@ -114,14 +118,14 @@ function FsmHub ( machine, transformerLib ) {
           hub = this
         , fnKeys = Object.keys ( methods )
         ;
-        hub.fsm = {}                        // Fsm's placeholder
-        hub.fnCallbacks = {}                // Callback functions place
+        hub.fsm = Object.create ( null )            // Fsm's placeholder. No prototype: names like 'constructor' are free
+        hub.fnCallbacks = Object.create ( null )    // Callback functions place
         hub.debug = machine.debug || false
         hub.cache = stack ({ type : 'FIFO' })
         hub.cacheInternal = stack ({ type: 'FIFO' })
         hub.wait = []
         hub.lock = false
-        hub.haveInternalRequest = false
+        hub.updating = new Set ()
         hub.reactivityTask = false
         hub.askForPromise = askForPromise
 

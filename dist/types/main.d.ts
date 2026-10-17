@@ -22,9 +22,11 @@ export type HubDescription = {
 export type ListenerCallback = (data: any) => any;
 export type RegisteredFsm = {
     /**
-     * - Register an update listener.
+     * - Register
+     * a listener. The hub listens to `positive` (a successful transition) and `update`
+     * (the update is complete). It reacts only to updates with a successful transition.
      */
-    on: (event: 'update', listener: (state: string, response?: any) => void) => void;
+    on: (event: 'positive' | 'update', listener: (state: string, response?: any) => void) => void;
     /**
      * - Execute an
      * action and resolve with its response.
@@ -79,9 +81,10 @@ export type HubContext = {
      */
     lock: boolean;
     /**
-     * - Whether an internal reaction is in progress.
+     * - FSM names the running reaction updates. Their
+     * updates are internal and wait in `cacheInternal`.
      */
-    haveInternalRequest: boolean;
+    updating: Set<string>;
     /**
      * - Reserved flag initialized to false.
      */
@@ -122,6 +125,10 @@ export type HubContext = {
      * - Dispatch an update to its listeners.
      */
     _callback: ReturnType<typeof methods._callback>;
+    /**
+     * - Run reactions one at a time.
+     */
+    _schedule: ReturnType<typeof methods._schedule>;
     /**
      * - Log diagnostics when enabled.
      */

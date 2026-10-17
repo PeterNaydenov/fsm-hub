@@ -6,6 +6,7 @@
  * @property {string} REGISTERED_FUNCTION_NAME - Duplicate registration; value is the callback name.
  * @property {string} MISSING_FSM - Unregistered subscriber; value is the FSM name.
  * @property {string} MISSING_FN - Unregistered callback; value is the function name.
+ * @property {string} LISTENER_ERROR - Thrown listener, transformer, or rejected subscriber update; value is the listener name. Always logged with `console.error`.
  */
 export type HubMessages = {
     /**
@@ -28,9 +29,14 @@ export type HubMessages = {
      * - Unregistered callback; value is the function name.
      */
     MISSING_FN: string;
+    /**
+     * - Thrown listener, transformer, or rejected subscriber update; value is the listener name. Always logged with `console.error`.
+     */
+    LISTENER_ERROR: string;
 };
 /**
- * Shared diagnostic text. Messages are logged only when the hub's debug flag is enabled.
+ * Shared diagnostic text. Messages are logged only when the hub's debug flag is enabled,
+ * except `LISTENER_ERROR`, which is always logged.
  * @type {HubMessages}
  */
 declare const msg: HubMessages;

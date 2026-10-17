@@ -1,6 +1,7 @@
 import _setTransitions from './_setTransitions.js'
 import _debugger       from './_debugger.js'
 import _callback       from './_callback.js'
+import _schedule       from './_schedule.js'
 
 import addFsm          from './addFsm.js'
 import addFunctions    from './addFunctions.js'
@@ -11,6 +12,7 @@ import addFunctions    from './addFunctions.js'
  *   _setTransitions: typeof _setTransitions,
  *   _debugger: typeof _debugger,
  *   _callback: typeof _callback,
+ *   _schedule: typeof _schedule,
  *   addFsm: typeof addFsm,
  *   addFunctions: typeof addFunctions
  * }}
@@ -19,6 +21,7 @@ const fn = {
                   _setTransitions
                 , _debugger
                 , _callback
+                , _schedule
 
                 , addFsm
                 , addFunctions

@@ -11,7 +11,8 @@ function _setTransitions ( hub, msg ) {
  * Non-array rows and rows of other lengths are skipped with a diagnostic using
  * their one-based row number. Listener lists retain rule order and duplicates;
  * the last action wins for a repeated `source/state/subscriber` key. Transformer
- * names absent from the supplied library are omitted.
+ * names absent from the supplied library, including inherited names such as
+ * `toString`, are omitted.
  * @private
  * @param {import('../main.js').HubDescription} machine - Reactivity and transformer configuration.
  * @param {import('../main.js').TransformerLibrary} [transformerLib={}] - Functions by name.
@@ -62,7 +63,7 @@ return function ( {reactivity, transformers}, transformerLib={} ) {
                 Object.keys ( transformers ).forEach ( key => {
                         const
                               keyFn = transformers [key]
-                            , fn    = transformerLib [ keyFn] 
+                            , fn    = Object.hasOwn ( transformerLib, keyFn ) ? transformerLib [ keyFn ] : undefined   // Ignore inherited names like 'toString'
                             ;
                         if ( fn )   mod[key] = fn
                     })

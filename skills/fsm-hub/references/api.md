@@ -21,7 +21,7 @@ const hub = new FsmHub({
 | API | Contract |
 | --- | --- |
 | `new FsmHub(description, transformerLib?)` | Requires a `reactivity` array; an empty array is valid. `transformers` and `debug` are optional. |
-| `hub.addFsm({ name: instance })` | Registers instances exposing `on('update', listener)` and `update(action, data)`, which returns a promise. Returns `undefined`. |
+| `hub.addFsm({ name: instance })` | Registers instances exposing `on('positive', listener)`, `on('update', listener)` and `update(action, data)`, which returns a promise. The hub reacts to an update only if a `positive` event (a successful transition) came before it. Returns `undefined`. |
 | `hub.addFunctions({ name: fn })` | Registers functions called as `fn(data)`. Returns `undefined`; callback return values are ignored. |
 
 Use consistent names in rules and registrations. Source and subscriber machines
@@ -63,11 +63,15 @@ of an orchestration, create a promise or use an existing application signal
 resolved by the final listener. There is no public `hub.update()`, `hub.done()`,
 `hub.removeFsm()`, or unsubscribe API.
 
-During an active reaction, updates with truthy responses are classified as
-internal; updates with falsy responses are queued as external. Internal and
-external queues are FIFO, with internal updates drained first. This classification
-uses response truthiness, not an explicit origin field. Inspect `addFsm.js` before
-changing scheduler behavior or making stronger guarantees about concurrency.
+The hub runs one reaction at a time. During a reaction, an update from an FSM
+that this reaction is updating is internal; every other update is external.
+Both wait in FIFO queues, and internal updates run first, so a cascade finishes
+before unrelated updates. Response values play no part in this. Scheduling lives
+in `_schedule.js`.
+
+The hub ignores updates without a successful transition: unknown actions and
+transitions that finish with `success: false`. A successful transition to the
+same state still triggers reactions. In a chain, one successful step is enough.
 
 Falsy data destined for an FSM is replaced by `{ ___internalFlag: true }`.
 Function callbacks retain null, undefined, and other falsy inputs. Before a
@@ -75,11 +79,12 @@ function callback, an `answer` property containing `___internalFlag` is cleared
 to `undefined`; this can mutate a shared payload. Reserve that marker for the
 library and prefer fresh transformer objects when listeners need isolation.
 
-Transformer errors, thrown callbacks, and rejected subscriber promises are not
-caught by the hub and can leave reaction tasks unfinished. Complete expected
-failures inside the application's transition functions and handle callback
-errors where they originate. Avoid reaction cycles unless the application has
-a terminating condition.
+Transformer errors, thrown callbacks, and rejected subscriber promises are
+caught and logged with `console.error('Error: Listener "%s" failed.', name, error)`,
+also without `debug`. The other listeners still run, and the hub goes on to the
+next queued update. Handle errors where they originate when the application must
+react to them. Avoid reaction cycles unless the application has a terminating
+condition.
 
 ## Diagnostics and TypeScript
 
