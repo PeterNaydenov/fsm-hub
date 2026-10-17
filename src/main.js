@@ -54,7 +54,8 @@ import stack from '@peter.naydenov/stack'
  * @typedef {Object} ReactionTables
  * @property {TransformerLibrary} transformers - Functions keyed by `source/listener`.
  * @property {Record<string, Array<string>>} subscribers - FSM names keyed by `source/state`.
- * @property {Record<string, string>} actions - Actions keyed by `source/state/subscriber`.
+ * @property {Record<string, Array<string>>} actions - Actions keyed by `source/state/subscriber`,
+ * one per rule in rule order.
  * @property {Record<string, Array<string>>} callbacks - Callback names keyed by `source/state`.
  */
 
@@ -75,7 +76,8 @@ import stack from '@peter.naydenov/stack'
  * @property {typeof askForPromise} askForPromise - Promise-task factory.
  * @property {TransformerLibrary} transformers - Functions keyed by `source/listener`.
  * @property {Record<string, Array<string>>} subscribers - FSM names keyed by `source/state`.
- * @property {Record<string, string>} actions - Actions keyed by `source/state/subscriber`.
+ * @property {Record<string, Array<string>>} actions - Actions keyed by `source/state/subscriber`,
+ * one per rule in rule order.
  * @property {Record<string, Array<string>>} callbacks - Callback names keyed by `source/state`.
  * @property {ReturnType<typeof methods.addFsm>} addFsm - Register named FSM instances.
  * @property {ReturnType<typeof methods.addFunctions>} addFunctions - Register named callbacks.
@@ -87,7 +89,7 @@ import stack from '@peter.naydenov/stack'
 
 /**
  * Constructible entry point, including methods attached dynamically to each hub.
- * @typedef {{new(machine: HubDescription, transformerLib?: TransformerLibrary): HubContext}} FsmHubConstructor
+ * @typedef {{new(machine: HubDescription, transformerLib?: TransformerLibrary | null): HubContext}} FsmHubConstructor
  */
 
 /**
@@ -98,7 +100,7 @@ import stack from '@peter.naydenov/stack'
  * @constructor
  * @this {HubContext}
  * @param {HubDescription} machine - Reactivity rules and optional transformer mapping.
- * @param {TransformerLibrary} [transformerLib={}] - Named transformation functions.
+ * @param {TransformerLibrary|null} [transformerLib={}] - Named transformation functions. `null` works like `{}`.
  * @example
  * const hub = new FsmHub({
  *     reactivity: [

@@ -30,6 +30,8 @@ hub.addFunctions({ report: data => console.log(data) });
 const update: Promise<any> = hub.fsm.source.update('activate', { message: 'ready' });
 const empty: boolean = hub.cache.isEmpty();
 new FsmHub({ reactivity: [] });
+new FsmHub({ reactivity: [] }, null);
+const actions: string[] = hub.actions['source/active/target'];
 
 // @ts-expect-error The hub description requires a reactivity table.
 new FsmHub({ debug: true });

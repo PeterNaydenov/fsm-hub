@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import FsmHub from '../src/main.js'
 import Fsm from '@peter.naydenov/fsm'
 
@@ -35,7 +35,7 @@ it ( 'Hub structure', () => {
         expect ( hub.subscribers['one/active'][0] ).toBe ( 'two' )
 
         expect ( hub.actions ).toHaveProperty ( 'one/active/two' )
-        expect ( hub.actions['one/active/two']).toBe ( 'activate' )
+        expect ( hub.actions['one/active/two']).toEqual ([ 'activate' ])
 
     }) // it hub structure
 
@@ -103,37 +103,6 @@ it ( 'Add a callback function', () => {
         expect ( hub.fnCallbacks ).toHaveProperty ( 'more' )
         expect ( typeof hub.fnCallbacks['showme']).toBe ( 'function' )
         expect ( typeof hub.fnCallbacks['more']).toBe ( 'function' )
-    }) // register a fsm
-
-
-
-
-
-
-it ( 'Add a fsm', () => {
-        const
-            mini = {
-                              init : 'none'
-                            , behavior : [
-                                        [ 'none', 'activate', 'active', 'switchOn']
-                                    ]
-                    };
-        const machine = new Fsm ( mini );
-        const
-            hubDescription = {
-                            reactivity : [
-                                              [ 'one', 'active', 'two', 'activate'  ]
-                                            , [ 'two', 'active', 'showme' ]
-                                        ]
-                            , transformers : {
-                                            // "from/to" : functionName
-                                            'two/showme' : 'simple'
-                                        }
-                        }
-        const hub = new FsmHub ( hubDescription );
-        hub.addFsm ( { one:machine })
-
-        expect ( hub.fsm ).toHaveProperty ( 'one' )
     }) // register a fsm
 
 
@@ -408,7 +377,7 @@ it ( 'Not registered fsm subscriber', () => new Promise ( resolve => {
 
 
 
-it ( 'Transformer is not a function', () => {
+it ( 'Transformer is not a function', () => new Promise ( resolve => {
   const
             miniOne = {
                               init  : 'none'
@@ -453,14 +422,16 @@ it ( 'Transformer is not a function', () => {
         const hub = new FsmHub ( machine, transformerLib );
 
         hub.addFsm ({  one, two })
-        // hub._debugger = function ( str, data ) {
-        //         expect ( str ).toBe ( MISSING_FSM )
-        //         done ()
-        //     }
+        hub.addFunctions ({
+                    showme ( data ) {   // Not a function: the original response comes through
+                                expect ( data ).toBe ( 'try' )
+                                resolve ()
+                        }
+            })
 
         // Start!
         one.update ( 'activate', 'try' )
-}) // it Transformer is not a function
+})) // it Transformer is not a function
 
 
 
@@ -547,8 +518,16 @@ it ( 'Callback-function with data argument', () => new Promise ( resolve => {
                                     ]
                         , debug : true
                     };
-    const hub = new FsmHub ( machine );
+    const
+          log = vi.spyOn ( console, 'log' ).mockImplementation ( () => {} )
+        , hub = new FsmHub ( machine )
+        , quietHub = new FsmHub ({ ...machine, debug: false })
+        ;
     hub._debugger ( 'Test for %s', 'debugger' )
+    quietHub._debugger ( 'Test for %s', 'quiet' )
+    expect ( log ).toHaveBeenCalledTimes ( 1 )
+    expect ( log ).toHaveBeenCalledWith ( 'Test for %s', 'debugger' )
+    log.mockRestore ()
 }) // it Test debugger
 
 

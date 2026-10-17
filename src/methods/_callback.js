@@ -34,9 +34,8 @@ function fail ( name, error ) {
 /**
  * Start subscribed FSM actions, then invoke callback functions in rule order.
  * Each listener receives its configured transformer's output or the original
- * response. Falsy FSM input is replaced with `{ ___internalFlag: true }`;
- * callbacks receive falsy input unchanged. A callback's `answer` is cleared if
- * it contains that internal marker, which can mutate the supplied data object.
+ * response, including falsy values like `0`, `false`, `''` and `null`.
+ * Two rules for the same subscriber send each rule's own action, in rule order.
  * Missing listeners are skipped with a diagnostic.
  *
  * Complete the task after subscriber update promises settle and callbacks have
@@ -54,6 +53,7 @@ function fail ( name, error ) {
 return function _callback ( task, fsmName, state, response ) {
     const 
           itemKey        = `${fsmName}/${state}`
+        , ruleIndex      = {}   // Rules seen so far for each subscriber name
         , fsmSubscriber  = hub.subscribers[itemKey] || false   // names of subscribed FSM list  
         , callbackNames  = hub.callbacks[itemKey]   || false   // names of subscribed functions list
         , fnCallbacks    = hub.fnCallbacks   // List of available functions       
@@ -80,13 +80,12 @@ return function _callback ( task, fsmName, state, response ) {
                                           hub._debugger ( msg.MISSING_FSM, subscriberName )
                                           return
                                       }
-                                  const action = act [ `${itemKey}/${subscriberName}` ];
+                                  const 
+                                          i = ruleIndex[subscriberName] = ( ruleIndex[subscriberName] ?? -1 ) + 1
+                                        , action = act [ `${itemKey}/${subscriberName}` ][i]
+                                        ;
                                   try {
-                                          let data = getData ( `${fsmName}/${subscriberName}`, state, response );
-                                          if ( !data ) {  
-                                                    data = {}
-                                                    data.___internalFlag = true    
-                                                }
+                                          const data = getData ( `${fsmName}/${subscriberName}`, state, response );
                                           hub.updating.add ( subscriberName )   // Its update events are internal for this reaction
                                           const updatePromise = Promise.resolve ( hub.fsm [ subscriberName ].update ( action, data ) );
                                           wait.push ( updatePromise.catch ( error => fail ( subscriberName, error ) ) )
@@ -105,17 +104,7 @@ return function _callback ( task, fsmName, state, response ) {
                                           return
                                       }
                                   try {
-                                          const data = getData ( `${fsmName}/${cbName}`, state, response );
-                                          // `data` can be null/undefined if the response is
-                                          // null and no transformer is set, or if the
-                                          // transformer itself returns null. Guard the
-                                          // `.answer` access so we don't blow up — the
-                                          // placeholder-clear below is a no-op when
-                                          // `data` is falsy, and `fn(data)` will still
-                                          // receive whatever value the user/transformer
-                                          // produced (null included).
-                                          if ( data && data.answer && Object.hasOwn ( data.answer, '___internalFlag' ) )  data.answer = undefined
-                                          fn ( data )
+                                          fn ( getData ( `${fsmName}/${cbName}`, state, response ) )
                                       }
                                   catch ( error ) {
                                           fail ( cbName, error )

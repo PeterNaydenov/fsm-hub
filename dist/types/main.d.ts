@@ -43,9 +43,10 @@ export type ReactionTables = {
      */
     subscribers: Record<string, Array<string>>;
     /**
-     * - Actions keyed by `source/state/subscriber`.
+     * - Actions keyed by `source/state/subscriber`,
+     * one per rule in rule order.
      */
-    actions: Record<string, string>;
+    actions: Record<string, Array<string>>;
     /**
      * - Callback names keyed by `source/state`.
      */
@@ -102,9 +103,10 @@ export type HubContext = {
      */
     subscribers: Record<string, Array<string>>;
     /**
-     * - Actions keyed by `source/state/subscriber`.
+     * - Actions keyed by `source/state/subscriber`,
+     * one per rule in rule order.
      */
-    actions: Record<string, string>;
+    actions: Record<string, Array<string>>;
     /**
      * - Callback names keyed by `source/state`.
      */
@@ -135,7 +137,7 @@ export type HubContext = {
     _debugger: ReturnType<typeof methods._debugger>;
 };
 export type FsmHubConstructor = {
-    new (machine: HubDescription, transformerLib?: TransformerLibrary): HubContext;
+    new (machine: HubDescription, transformerLib?: TransformerLibrary | null): HubContext;
 };
 declare const _default: FsmHubConstructor;
 export default _default;

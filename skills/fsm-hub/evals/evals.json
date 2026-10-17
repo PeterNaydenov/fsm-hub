@@ -18,7 +18,7 @@
         "Explains that hub callbacks receive one data argument; only transformers receive state and response separately.",
         "Checks rule lengths, source state, listener registrations, and transformer names.",
         "Enables debug logging to identify missing registrations or malformed rows.",
-        "Preserves null input for function callbacks and distinguishes it from the internal marker used for falsy subscriber-FSM input."
+        "Explains that listeners receive null and other falsy data unchanged, so callbacks must handle null."
       ]
     },
     {

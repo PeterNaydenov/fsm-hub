@@ -3,22 +3,22 @@
  * @private
  * @param {import('../main.js').HubContext} hub - Hub used to report invalid rules.
  * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
- * @returns {(machine: import('../main.js').HubDescription, transformerLib?: import('../main.js').TransformerLibrary) => import('../main.js').ReactionTables} Bound table compiler.
+ * @returns {(machine: import('../main.js').HubDescription, transformerLib?: import('../main.js').TransformerLibrary | null) => import('../main.js').ReactionTables} Bound table compiler.
  */
 function _setTransitions ( hub, msg ) {
 /**
  * Compile three-element callback rules and four-element FSM rules into lookup tables.
  * Non-array rows and rows of other lengths are skipped with a diagnostic using
- * their one-based row number. Listener lists retain rule order and duplicates;
- * the last action wins for a repeated `source/state/subscriber` key. Transformer
+ * their one-based row number. Listener lists retain rule order and duplicates.
+ * Actions are lists in rule order, one per rule for that `source/state/subscriber` key. Transformer
  * names absent from the supplied library, including inherited names such as
  * `toString`, are omitted.
  * @private
  * @param {import('../main.js').HubDescription} machine - Reactivity and transformer configuration.
- * @param {import('../main.js').TransformerLibrary} [transformerLib={}] - Functions by name.
+ * @param {import('../main.js').TransformerLibrary|null} [transformerLib={}] - Functions by name. `null` works like `{}`.
  * @returns {import('../main.js').ReactionTables} Compiled listener, action, and transformer tables.
  */
-return function ( {reactivity, transformers}, transformerLib={} ) {
+return function ( {reactivity, transformers}, transformerLib ) {
     let 
           mod = {}
         , subscribers = {}
@@ -51,7 +51,8 @@ return function ( {reactivity, transformers}, transformerLib={} ) {
                         subscribers [key].push ( listener   ) 
 
                         const actKey = `${key}/${listener}`;   // fsmName/state/fsmSubscriberName
-                        actions [actKey] = listenerAct
+                        if ( !actions[actKey] )   actions[actKey] = []
+                        actions [actKey].push ( listenerAct )
                     }
 
                 if ( length == 3 ) {   // ruleLine with function callback
@@ -59,6 +60,7 @@ return function ( {reactivity, transformers}, transformerLib={} ) {
                         callbacks[key].push ( listener )
                     }
         }) // forEach ruleLine
+    transformerLib = transformerLib ?? {}   // Also covers an explicit null
     if ( transformers )   {
                 Object.keys ( transformers ).forEach ( key => {
                         const

@@ -20,7 +20,7 @@ const hub = new FsmHub({
 
 | API | Contract |
 | --- | --- |
-| `new FsmHub(description, transformerLib?)` | Requires a `reactivity` array; an empty array is valid. `transformers` and `debug` are optional. |
+| `new FsmHub(description, transformerLib?)` | Requires a `reactivity` array; an empty array is valid. `transformers` and `debug` are optional. `transformerLib` may be omitted or `null`. |
 | `hub.addFsm({ name: instance })` | Registers instances exposing `on('positive', listener)`, `on('update', listener)` and `update(action, data)`, which returns a promise. The hub reacts to an update only if a `positive` event (a successful transition) came before it. Returns `undefined`. |
 | `hub.addFunctions({ name: fn })` | Registers functions called as `fn(data)`. Returns `undefined`; callback return values are ignored. |
 
@@ -40,8 +40,8 @@ functions complete with `task.done({ success, response?, stateData? })`.
   updates. Non-array rows and rows of other lengths are skipped. Diagnostics
   identify invalid rows by one-based index.
 - Rules are indexed by `source/state`. FSM actions are indexed by
-  `source/state/subscriber`. Listener lists retain duplicates; repeating an FSM
-  key can trigger multiple updates using the last configured action.
+  `source/state/subscriber` as lists in rule order. Listener lists retain
+  duplicates; each repeated rule sends its own action.
 - Transformers are keyed by `source/listener`, without the source state. Each
   transformer applies to every matching rule for that source and listener.
 - The description contains transformer **names**; the second constructor
@@ -56,7 +56,9 @@ Subscriber FSM updates start first in their rule order. Function callbacks then
 run in their rule order, before the subscriber update promises have necessarily
 resolved. Internal reaction tasks finish after the immediate subscriber promises
 resolve and the function callbacks have been invoked. Async callback results
-are ignored.
+are ignored. A subscriber transition that never calls `task.done` keeps the
+reaction open, and the hub waits for it; queued updates do not run until it
+finishes.
 
 The source FSM's update promise represents that machine's work. For completion
 of an orchestration, create a promise or use an existing application signal
@@ -73,11 +75,9 @@ The hub ignores updates without a successful transition: unknown actions and
 transitions that finish with `success: false`. A successful transition to the
 same state still triggers reactions. In a chain, one successful step is enough.
 
-Falsy data destined for an FSM is replaced by `{ ___internalFlag: true }`.
-Function callbacks retain null, undefined, and other falsy inputs. Before a
-function callback, an `answer` property containing `___internalFlag` is cleared
-to `undefined`; this can mutate a shared payload. Reserve that marker for the
-library and prefer fresh transformer objects when listeners need isolation.
+Listeners receive data unchanged, including `0`, `false`, `''`, `null`, and
+`undefined`. Every listener of an update receives the same response object;
+prefer fresh transformer objects when listeners need isolation.
 
 Transformer errors, thrown callbacks, and rejected subscriber promises are
 caught and logged with `console.error('Error: Listener "%s" failed.', name, error)`,

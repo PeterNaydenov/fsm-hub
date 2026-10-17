@@ -49,15 +49,21 @@ Execution of **reactivity reactions** goes always from top to bottom by type. **
 
 ```js
 [
-    [ 'machine', 'open', 'informSecurity' ]
-    [ 'machine', 'open', 'activateLights' ]
-    [ 'machine', 'open', 'camera', 'wake' ]
+      [ 'machine', 'open', 'informSecurity' ]
+    , [ 'machine', 'open', 'activateLights' ]
+    , [ 'machine', 'open', 'camera', 'wake' ]
 ]
 ```
 Order of execution:
 1. Will trigger fsm update of the `camera` fsm with action `wake`.
 2. Will trigger listener function `informSecurity`.
 3. Will trigger listener function `activateLights`.
+
+### When the Hub Reacts
+- The hub reacts to an fsm update only if it had a successful transition. Unknown actions and transitions with `success: false` are ignored. A successful transition to the same state still triggers the reactions;
+- The hub runs one reaction at a time. Updates that come in during a reaction wait. Updates from fsm machines that the running reaction updates go first, then the other updates in the order they came;
+- A reaction is complete when all fsm updates it started are complete. An fsm transition that never calls `task.done` keeps the hub waiting;
+- If a listener function or a transformer throws, or an fsm update rejects, the hub logs the error with `console.error` and continues with the next listener;
 
 
 
@@ -126,21 +132,24 @@ Create hub and register two fsm machines: **oneFsm** and **twoFsm**. Register al
 Hub should start **twoFsm** when **oneFsm** is started. When **twoFsm** is `active` trigger a **showme** callback function. The transformer `twoFsm/showme` should be applied.
 
 ```js
+import Fsm    from '@peter.naydenov/fsm'
+import FsmHub from '@peter.naydenov/fsm-hub'
+
 // Define Fsm machines
     const 
          miniOne = {
                           init : 'none'
-                        , table : [
+                        , behavior : [
                                     [ 'none', 'activate', 'active', 'switchOn']
                                 ]
                 };
 
 // Setup fsm transition libraries
     const transitionOne = {
-                    switchOn ( task, dependencies, stateObj, dt ) {
+                    switchOn ( { task }, data ) {
                                 task.done ({ 
                                           success  : true 
-                                        , response : dt   // send data without changes
+                                        , response : data   // send data without changes
                                     })
                         }
             };
@@ -148,7 +157,7 @@ Hub should start **twoFsm** when **oneFsm** is started. When **twoFsm** is `acti
 
 
 // Init fsm machines
-    const  // oneFsm and twoFsm are identical fsm machines
+    const  // one and two are identical fsm machines
           one = new Fsm ( miniOne, transitionOne  )
         , two = new Fsm ( miniOne, transitionOne  )
         ;
@@ -182,23 +191,22 @@ const
       ;
 
 // Initialize the hub
-    let hub = new FsmHub ( machine, transformerLib );
+    const hub = new FsmHub ( machine, transformerLib );
 
-    function showme (transitionResult) {
+    function showme ( transitionResult ) {
                 console.log ( 'ShowMe' )
-                console.log ( transitionResult.answer )
+                console.log ( transitionResult )
         } // showme func.
 
     hub.addFsm ({ one, two })
     hub.addFunctions ( { showme })
 
 // Start!
-    oneFsm.update ( 'activate', { response:'try'} )
+    one.update ( 'activate', { response:'try'} )
 
 // Result on the screen:
 // ShowMe
 // { second: 'second', state: 'active', answer: 'try' }
-
 ```
 
 
@@ -206,8 +214,17 @@ const
 ## TypeScript Declarations
 
 TypeScript types are generated from the JSDoc comments in `src` and included in
-the package. Both the `types` field and the package exports point to
-`dist/types/main.d.ts`.
+the package. ES modules and bundlers get `dist/types/main.d.ts`. CommonJS gets
+`dist/types/main.d.cts`, which matches `module.exports = FsmHub`:
+
+```ts
+// ES modules and bundlers
+import FsmHub, { type HubDescription } from '@peter.naydenov/fsm-hub'
+
+// CommonJS
+import FsmHub = require ( '@peter.naydenov/fsm-hub' )
+const description: FsmHub.HubDescription = { reactivity: [] }
+```
 
 Run `npm run build:types` to generate declarations only, or `npm run build` to
 generate declarations and JavaScript bundles. Run `npm run test:types` to check

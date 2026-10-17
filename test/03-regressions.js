@@ -354,6 +354,71 @@ describe ( 'Failed transitions', () => {
 
 }) // describe Failed transitions
 
+
+
+describe ( 'Rules and data', () => {
+
+    it ( 'Falsy data reaches subscriber FSMs unchanged', async () => {
+            const
+                  received = []
+                , a = new Fsm ({ init: 'idle', behavior: [[ 'idle', 'go', 'idle', 'go' ]] }, {
+                                go ({ task }, data ) { task.done ({ success: true, response: data }) }
+                        })
+                , b = new Fsm ({ init: 'idle', behavior: [[ 'idle', 'set', 'idle', 'set' ]] }, {
+                                set ({ task }, data ) { received.push ( data ); task.done ({ success: true }) }
+                        })
+                , hub = new FsmHub ({ reactivity: [ [ 'a', 'idle', 'b', 'set' ] ]})
+                ;
+            hub.addFsm ({ a, b })
+            for ( const value of [ 0, false, '', null ] ) {
+                        a.update ( 'go', value )
+                        await sleep ( 5 )
+                }
+            expect ( received ).toEqual ([ 0, false, '', null ])
+        }) // it falsy data
+
+
+
+    it ( 'Each rule for the same subscriber sends its own action', async () => {
+            const
+                  actions = []
+                , a = machine ()
+                , b = new Fsm ({ init: 'x', behavior: [[ 'x', 'first', 'x', 'record' ], [ 'x', 'second', 'x', 'record' ]] }, {
+                                record ({ task }) { task.done ({ success: true }) }
+                        })
+                , hub = new FsmHub ({ reactivity: [ [ 'a', 'on', 'b', 'first' ], [ 'a', 'on', 'b', 'second' ] ]})
+                , update = b.update
+                ;
+            b.update = ( action, data ) => { actions.push ( action ); return update ( action, data ) }
+            hub.addFsm ({ a, b })
+            expect ( hub.actions['a/on/b'] ).toEqual ([ 'first', 'second' ])
+
+            a.update ( 'go' )
+            await sleep ( 10 )
+            expect ( actions ).toEqual ([ 'first', 'second' ])
+        }) // it duplicate rules
+
+
+
+    it ( 'Null transformer library works like an empty one', async () => {
+            const
+                  received = []
+                , hub = new FsmHub ({
+                                  reactivity   : [ [ 'a', 'on', 'report' ] ]
+                                , transformers : { 'a/report': 'missing' }
+                            }, null )
+                , a = machine ({ response: 'original' })
+                ;
+            hub.addFsm ({ a })
+            hub.addFunctions ({ report: data => received.push ( data ) })
+
+            a.update ( 'go' )
+            await sleep ( 5 )
+            expect ( received ).toEqual ([ 'original' ])
+        }) // it null transformer library
+
+}) // describe Rules and data
+
 }) // describe Regressions 3.0.0
 
 
