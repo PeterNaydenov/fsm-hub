@@ -1,15 +1,15 @@
 /**
- * Bind FSM registration to a hub.
- * @param {import('../main.js').HubContext} hub - Hub instance and reaction queues.
- * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
- * @returns {(ins: Record<string, import('../main.js').RegisteredFsm>) => void} Bound registration method.
+ * Create the `addFsm` method of a hub.
+ * @param {import('../main.js').HubContext} hub - Hub that receives the FSMs.
+ * @param {import('../msg.js').HubMessages} msg - Message templates.
+ * @returns {(ins: Record<string, import('../main.js').RegisteredFsm>) => void} `addFsm` method.
  */
 function addFsm ( hub, msg ) {
 /**
- * Register named FSM instances and listen to their `positive` and `update` events.
+ * Register FSMs by name and listen to their `positive` and `update` events.
  * The hub reacts to an update only if it had at least one successful transition;
- * failed and unknown actions are ignored. Existing names are skipped and reported
- * through the hub debugger.
+ * failed and unknown actions are ignored. A name that is already registered is
+ * skipped, with a warning in debug mode.
  * @param {Record<string, import('../main.js').RegisteredFsm>} ins - FSMs keyed
  * by the names used in reactivity rules.
  * @returns {void}

@@ -7,7 +7,8 @@ import addFsm          from './addFsm.js'
 import addFunctions    from './addFunctions.js'
 
 /**
- * Method factories invoked once per hub to create methods bound to that instance.
+ * Method factories. The constructor calls each one once per hub; the result is
+ * a method that works on that hub.
  * @type {{
  *   _setTransitions: typeof _setTransitions,
  *   _debugger: typeof _debugger,

@@ -1,8 +1,8 @@
 /**
- * Bind reaction dispatch to a hub.
+ * Create the reaction dispatcher of a hub.
  * @private
  * @param {import('../main.js').HubContext} hub - Hub with compiled tables and registered listeners.
- * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
+ * @param {import('../msg.js').HubMessages} msg - Message templates.
  * @returns {(task: import('ask-for-promise').AskObject, fsmName: string, state: string, response?: any) => void} Bound reaction dispatcher.
  */
 function _callback ( hub, msg ) {
@@ -21,7 +21,7 @@ function getData ( transformerKey, state, response ) {
     } // getData func.
 
 /**
- * Report a listener error. Errors are always logged, with or without debug mode.
+ * Log a listener error with `console.error`, also without debug mode.
  * @private
  * @param {string} name - Listener name.
  * @param {*} error - Thrown error or rejection reason.
@@ -32,17 +32,17 @@ function fail ( name, error ) {
     } // fail func.
 
 /**
- * Start subscribed FSM actions, then invoke callback functions in rule order.
- * Each listener receives its configured transformer's output or the original
- * response, including falsy values like `0`, `false`, `''` and `null`.
- * Two rules for the same subscriber send each rule's own action, in rule order.
- * Missing listeners are skipped with a diagnostic.
+ * Run the reaction to one update: start the actions of subscriber FSMs, then
+ * call the callback functions, each in rule order. Each listener gets its
+ * transformer's result, or the response unchanged (falsy values included).
+ * Repeated rules for one subscriber send their own actions. Each subscriber is
+ * added to `hub.updating`, so its update events count as internal. Missing
+ * listeners are skipped with a warning.
  *
- * Complete the task after subscriber update promises settle and callbacks have
- * been invoked. Callback return values and promises are ignored. With no
- * listeners, complete immediately. A thrown transformer or listener, or a rejected
- * subscriber promise, is logged with `console.error`; the other listeners still
- * run and the task still completes.
+ * The task completes when all subscriber updates have settled and all callbacks
+ * have been called; with no listeners, at once. Callback results are ignored.
+ * A thrown transformer or listener, or a rejected subscriber update, is logged
+ * with `console.error`; the other listeners still run and the task completes.
  * @private
  * @param {import('ask-for-promise').AskObject} task - Reaction task completed through `done()`.
  * @param {string} fsmName - Registered source FSM name.

@@ -17,6 +17,7 @@
 - [x] Fix: Two rules for the same source, state and subscriber send their own actions. Before, the last action was sent for every rule;
 - [x] Fix: `new FsmHub(description, null)` works like no transformer library. Before, it threw when the description had `transformers`;
 - [x] Docs: README example uses the fsm v.6 API and runs as shown. New section "When the Hub Reacts". README TypeScript section covers CommonJS;
+- [x] Docs: JSDoc reworked for editor hovers. The constructor's description and example are on the default export, `addFsm` and `addFunctions` are fully described, reactivity rules have named parts (`[source, state, subscriber, action]`), descriptions no longer start with `- `, and internal hub members are marked as internal. The constructor's first parameter is named `description`;
 - [x] Dependency update. @peter.naydenov/stack - v.3.0.2;
 - [x] Dependency update. ask-for-promise - v.3.2.1;
 - [x] Package: A `files` list in `package.json`. Tests, configs and `AGENTS.md` are no longer published (tarball 27 KB → 21 KB);

@@ -1,12 +1,12 @@
 /**
- * Bind diagnostic logging to a hub's debug flag.
+ * Create the warning logger of a hub.
  * @private
- * @param {import('../main.js').HubContext} hub - Hub whose debug flag controls logging.
- * @returns {(str: string, data?: any) => void} Bound diagnostic logger.
+ * @param {import('../main.js').HubContext} hub - Hub whose debug flag turns logging on.
+ * @returns {(str: string, data?: any) => void} Warning logger.
  */
 function  _debugger ( hub ) {
 /**
- * Pass a diagnostic template and its value to `console.log` when debugging is enabled.
+ * Log a message template and its value with `console.log`, in debug mode only.
  * @private
  * @param {string} str - Diagnostic text, optionally containing a `%s` placeholder.
  * @param {*} [data] - Value passed as the second argument to `console.log`.
@@ -14,7 +14,7 @@ function  _debugger ( hub ) {
  */
 return function ( str, data ) {
     if ( hub.debug )   console.log ( str, data )
-}} // debugger func.
+}} // _debugger func.
 
 
 

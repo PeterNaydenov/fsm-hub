@@ -1,20 +1,20 @@
 /**
- * Bind compilation of reactivity rules to a hub.
+ * Create the rule compiler of a hub.
  * @private
- * @param {import('../main.js').HubContext} hub - Hub used to report invalid rules.
- * @param {import('../msg.js').HubMessages} msg - Diagnostic message templates.
- * @returns {(machine: import('../main.js').HubDescription, transformerLib?: import('../main.js').TransformerLibrary | null) => import('../main.js').ReactionTables} Bound table compiler.
+ * @param {import('../main.js').HubContext} hub - Hub that reports wrong rules.
+ * @param {import('../msg.js').HubMessages} msg - Message templates.
+ * @returns {(description: import('../main.js').HubDescription, transformerLib?: import('../main.js').TransformerLibrary | null) => import('../main.js').ReactionTables} Bound table compiler.
  */
 function _setTransitions ( hub, msg ) {
 /**
- * Compile three-element callback rules and four-element FSM rules into lookup tables.
- * Non-array rows and rows of other lengths are skipped with a diagnostic using
- * their one-based row number. Listener lists retain rule order and duplicates.
- * Actions are lists in rule order, one per rule for that `source/state/subscriber` key. Transformer
- * names absent from the supplied library, including inherited names such as
- * `toString`, are omitted.
+ * Compile the reactivity rules and transformer names into lookup tables.
+ * Three-element rules go to `callbacks`, four-element rules to `subscribers`
+ * and `actions`. A rule that is not an array of 3 or 4 elements is skipped with
+ * a warning that has its row number, from 1. Lists keep rule order and repeated
+ * names; `actions` has one action per rule. Transformer names that are not own
+ * keys of the library (e.g. `toString`) are skipped.
  * @private
- * @param {import('../main.js').HubDescription} machine - Reactivity and transformer configuration.
+ * @param {import('../main.js').HubDescription} description - Reactivity rules and transformer names.
  * @param {import('../main.js').TransformerLibrary|null} [transformerLib={}] - Functions by name. `null` works like `{}`.
  * @returns {import('../main.js').ReactionTables} Compiled listener, action, and transformer tables.
  */

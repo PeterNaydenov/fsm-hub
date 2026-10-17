@@ -1,17 +1,18 @@
 /**
- * Diagnostic templates passed to the hub's debugger with one substitution value.
+ * Message templates. Each one has a `%s` placeholder for one value.
  * @typedef {Object} HubMessages
- * @property {string} WRONG_REACTIVITY_RECORD - Invalid rule; value is its one-based row number.
- * @property {string} REGISTERED_FSM_NAME - Duplicate registration; value is the FSM name.
- * @property {string} REGISTERED_FUNCTION_NAME - Duplicate registration; value is the callback name.
- * @property {string} MISSING_FSM - Unregistered subscriber; value is the FSM name.
- * @property {string} MISSING_FN - Unregistered callback; value is the function name.
- * @property {string} LISTENER_ERROR - Thrown listener, transformer, or rejected subscriber update; value is the listener name. Always logged with `console.error`.
+ * @property {string} WRONG_REACTIVITY_RECORD Wrong reactivity rule. Value: its row number, from 1.
+ * @property {string} REGISTERED_FSM_NAME FSM name is already registered. Value: the name.
+ * @property {string} REGISTERED_FUNCTION_NAME Callback name is already registered. Value: the name.
+ * @property {string} MISSING_FSM A rule names an FSM that is not registered. Value: the name.
+ * @property {string} MISSING_FN A rule names a callback that is not registered. Value: the name.
+ * @property {string} LISTENER_ERROR A listener or transformer threw, or a subscriber
+ * update rejected. Value: the listener name. Logged with `console.error`, followed by the error.
  */
 
 /**
- * Shared diagnostic text. Messages are logged only when the hub's debug flag is enabled,
- * except `LISTENER_ERROR`, which is always logged.
+ * Messages of the hub. Warnings are logged with `console.log` in debug mode only.
+ * `LISTENER_ERROR` is always logged, with `console.error`.
  * @type {HubMessages}
  */
 const msg = {   // Error and warnings messages
