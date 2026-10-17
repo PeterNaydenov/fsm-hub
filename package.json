@@ -5,14 +5,29 @@
   "license": "MIT",
   "author": "Peter Naydenov",
   "main": "./dist/fsm-hub.umd.js",
-  "types": "./dist/types/main.d.ts",
+  "types": "./dist/types/main.d.cts",
   "type": "module",
+  "files": [
+    "dist",
+    "src",
+    "skills",
+    "Changelog.md",
+    "README.md"
+  ],
   "exports": {
     ".": {
-      "types": "./dist/types/main.d.ts",
-      "import": "./dist/fsm-hub.esm.mjs",
-      "require": "./dist/fsm-hub.cjs",
-      "default": "./dist/fsm-hub.umd.js"
+      "import": {
+        "types": "./dist/types/main.d.ts",
+        "default": "./dist/fsm-hub.esm.mjs"
+      },
+      "require": {
+        "types": "./dist/types/main.d.cts",
+        "default": "./dist/fsm-hub.cjs"
+      },
+      "default": {
+        "types": "./dist/types/main.d.cts",
+        "default": "./dist/fsm-hub.umd.js"
+      }
     },
     "./package.json": "./package.json",
     "./dist/*": "./dist/*",
@@ -21,23 +36,24 @@
   "scripts": {
     "test": "vitest run",
     "cover": "vitest run --coverage",
-    "build:types": "tsc -p tsconfig.json",
+    "build:types": "tsc -p tsconfig.json && node scripts/build-cts-types.js",
     "test:types": "npm run build:types && tsc -p test/types/tsconfig.json",
-    "build": "npm run build:types && rollup -c"
+    "build": "npm run build:types && rollup -c",
+    "prepublishOnly": "npm test && npm run test:types && rollup -c"
   },
   "dependencies": {
-    "@peter.naydenov/stack": "^3.0.1",
-    "ask-for-promise": "^3.2.0"
+    "@peter.naydenov/stack": "^3.0.2",
+    "ask-for-promise": "^3.2.1"
   },
   "devDependencies": {
-    "@peter.naydenov/fsm": "5.3.0",
+    "@peter.naydenov/fsm": "6.0.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
-    "@vitest/coverage-v8": "^5.0.3",
-    "rollup": "^4.64.3",
+    "@vitest/coverage-v8": "^5.0.5",
+    "rollup": "^4.64.7",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "overrides": {
     "serialize-javascript": "^7.0.5"
