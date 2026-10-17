@@ -1,6 +1,5 @@
 import methods from './methods/index.js'
 import msg from './msg.js'
-import askForPromise from 'ask-for-promise'
 import stack from '@peter.naydenov/stack'
 
 /**
@@ -68,12 +67,9 @@ import stack from '@peter.naydenov/stack'
  * @property {boolean} debug - Whether diagnostics are logged.
  * @property {import('@peter.naydenov/stack').Stack} cache - FIFO queue of external updates.
  * @property {import('@peter.naydenov/stack').Stack} cacheInternal - FIFO queue of internal updates, drained first.
- * @property {Array<*>} wait - Reserved storage initialized to an empty array.
  * @property {boolean} lock - Whether a reaction is in progress.
  * @property {Set<string>} updating - FSM names the running reaction updates. Their
  * updates are internal and wait in `cacheInternal`.
- * @property {boolean} reactivityTask - Reserved flag initialized to false.
- * @property {typeof askForPromise} askForPromise - Promise-task factory.
  * @property {TransformerLibrary} transformers - Functions keyed by `source/listener`.
  * @property {Record<string, Array<string>>} subscribers - FSM names keyed by `source/state`.
  * @property {Record<string, Array<string>>} actions - Actions keyed by `source/state/subscriber`,
@@ -125,11 +121,8 @@ function FsmHub ( machine, transformerLib ) {
         hub.debug = machine.debug || false
         hub.cache = stack ({ type : 'FIFO' })
         hub.cacheInternal = stack ({ type: 'FIFO' })
-        hub.wait = []
         hub.lock = false
         hub.updating = new Set ()
-        hub.reactivityTask = false
-        hub.askForPromise = askForPromise
 
         fnKeys.forEach ( k => {   // Attach methods to fsmHub
                   hub[k] = methods[k]( hub, msg )   

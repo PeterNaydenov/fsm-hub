@@ -10,6 +10,7 @@
 - [x] Breaking: Falsy data (`0`, `false`, `''`, `null`, `undefined`) reaches subscriber FSMs unchanged. Before, it was replaced by `{ ___internalFlag: true }`. Callbacks no longer clear an `answer` property that contains `___internalFlag`;
 - [x] Breaking: `hub.actions` values are arrays of actions in rule order: `{ 'a/on/b': ['go'] }`. Before, they were strings;
 - [x] Breaking: `hub.fsm` and `hub.fnCallbacks` have no prototype (`Object.create(null)`). Use `Object.hasOwn(hub.fsm, name)` or `name in hub.fsm` instead of `hub.fsm.hasOwnProperty(name)`;
+- [x] Breaking: Removed unused hub fields `hub.wait`, `hub.reactivityTask` and `hub.askForPromise`. Nothing has read them since v.1.0.4;
 - [x] Fix: The hub stopped reacting for good when an update came in during a chain reaction (for example a subscriber transition without `response`, plus any other update). The hub now runs one reaction at a time. Updates from FSMs that the current reaction updates go first, then other updates in FIFO order. `hub.haveInternalRequest` is replaced by `hub.updating`;
 - [x] Fix: An update with a `response` that came during a reaction ran at once, and when it finished it released the lock of the reaction that was still running;
 - [x] Fix: FSMs, callbacks and transformers can use names from `Object.prototype` like `constructor` or `toString`. Before, they were reported as already registered, or an unregistered `valueOf` callback called `Object.prototype.valueOf` and crashed;
@@ -19,6 +20,7 @@
 - [x] Dependency update. @peter.naydenov/stack - v.3.0.2;
 - [x] Dependency update. ask-for-promise - v.3.2.1;
 - [x] Package: A `files` list in `package.json`. Tests, configs and `AGENTS.md` are no longer published (tarball 27 KB → 21 KB);
+- [x] Package: Removed unused UMD `globals` from `rollup.config.js`. The UMD bundle includes its dependencies, so the output is the same;
 - [x] Package: `prepublishOnly` runs the tests and the type tests, then builds the bundles;
 - [x] Tests: Type test for CommonJS consumers (`import FsmHub = require(...)`);
 - [x] Tests: Regression tests for the scheduler, listener errors, prototype names, failed transitions, falsy data, repeated rules and a null transformer library. Tests without assertions now check results. A duplicated test is removed. 17 → 32 tests;

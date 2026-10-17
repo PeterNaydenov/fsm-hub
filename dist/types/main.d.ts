@@ -1,5 +1,4 @@
 import methods from './methods/index.js';
-import askForPromise from 'ask-for-promise';
 export type ReactivityRule = [string, string, string] | [string, string, string, string];
 export type Transformer = (state: string, response: any) => any;
 export type TransformerLibrary = Record<string, Transformer>;
@@ -74,10 +73,6 @@ export type HubContext = {
      */
     cacheInternal: import('@peter.naydenov/stack').Stack;
     /**
-     * - Reserved storage initialized to an empty array.
-     */
-    wait: Array<any>;
-    /**
      * - Whether a reaction is in progress.
      */
     lock: boolean;
@@ -86,14 +81,6 @@ export type HubContext = {
      * updates are internal and wait in `cacheInternal`.
      */
     updating: Set<string>;
-    /**
-     * - Reserved flag initialized to false.
-     */
-    reactivityTask: boolean;
-    /**
-     * - Promise-task factory.
-     */
-    askForPromise: typeof askForPromise;
     /**
      * - Functions keyed by `source/listener`.
      */

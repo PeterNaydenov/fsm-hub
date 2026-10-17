@@ -10,15 +10,11 @@ export default [
 		output: {
 			name: 'fsmHub',
 			file: 'dist/fsm-hub.umd.js',
-			format: 'umd',
-            globals : {
-                            'ask-for-promise' : 'askForPromise',
-                            '@peter.naydenov/stack' : 'stack'
-                    }
+			format: 'umd'
 		},
 		plugins: [
-			resolve(), // so Rollup can find `ms`
-			commonjs() // so Rollup can convert `ms` to an ES module
+			resolve(), // bundle ask-for-promise and @peter.naydenov/stack
+			commonjs()
 			, terser()
 		]
 	},
