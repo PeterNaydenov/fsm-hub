@@ -2,6 +2,11 @@
 
 
 
+### 3.1.0 ( 2026-10-20)
+- [x] Dependency update. @peter.naydenov/fsm - v.6.1.0;
+
+
+
 ### 3.0.0 ( 2026-10-17)
 - [x] Breaking: Dependency update. @peter.naydenov/fsm - v.6.0.0. The fsm engine moved to dt-toolbox 8, so fsm-hub gets a major version together with fsm;
 - [x] Breaking: CommonJS types. `require` now resolves to `dist/types/main.d.cts` with `export =`, which matches `module.exports = FsmHub` in `dist/fsm-hub.cjs`. Named types are on the namespace: `FsmHub.HubDescription`. Before, CommonJS consumers got the ESM types, so `require(...).default` passed the type check but was `undefined` at runtime. Checked with `@arethetypeswrong/cli`: node10, node16 (CJS and ESM) and bundler pass;
