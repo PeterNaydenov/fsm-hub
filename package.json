@@ -46,7 +46,7 @@
     "ask-for-promise": "^3.2.1"
   },
   "devDependencies": {
-    "@peter.naydenov/fsm": "6.0.0",
+    "@peter.naydenov/fsm": "^6.1.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
